@@ -1,0 +1,260 @@
+/* ============================================================
+   GestorFPQRS — Estilos Responsive
+   Breakpoints: xs(<576) sm(≥576) md(≥768) lg(≥992) xl(≥1200)
+   ============================================================ */
+
+/* ——————————————————————————————————————
+   TABLET (max 991px)
+—————————————————————————————————————— */
+@media (max-width: 991.98px) {
+
+  /* Sidebar se oculta y se convierte en drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: none;
+  }
+  .sidebar.sidebar-open {
+    transform: translateX(0);
+    box-shadow: 4px 0 30px rgba(0,0,0,0.25);
+  }
+  .sidebar-overlay.visible { display: block; }
+
+  /* El contenido ocupa todo el ancho */
+  .main-content { margin-left: 0; }
+  .app-wrapper.sidebar-collapsed .main-content { margin-left: 0; }
+
+  /* El colapsar sólo aplica en escritorio; en móvil el sidebar es un drawer completo */
+  .sidebar-collapse-btn { display: none; }
+
+  /* Botón de menú flotante (sustituye al antiguo topbar) */
+  .mobile-menu-btn { display: flex; }
+  .page-content { padding-top: 4.5rem; }
+  .param-main { padding-top: 4.5rem; }
+
+  /* Estadísticas: 2 columnas */
+  .stats-row .col { flex: 0 0 50%; max-width: 50%; }
+
+  /* Tabla: scroll horizontal */
+  .cases-table-wrapper { overflow-x: auto; }
+  .cases-table { min-width: 900px; }
+
+  /* Detalle caso: columnas apiladas */
+  .case-detail-cols .col-left  { order: 1; }
+  .case-detail-cols .col-right { order: 2; }
+
+  /* Formulario */
+  .fpqrs-type-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Page content */
+  .page-content { padding: 1rem; }
+
+  /* Parametrización: sub-sidebar pasa a barra horizontal de scroll */
+  .param-layout { flex-direction: column; overflow: visible; }
+  .param-sidebar {
+    width: 100%;
+    min-width: 0;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: visible;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .param-sidebar-head { display: none; }
+  .param-nav { display: flex; padding: 0.5rem; }
+  .param-nav-group { display: flex; align-items: center; margin-bottom: 0; margin-right: 0.5rem; }
+  .param-nav-label { display: none; }
+  .param-nav-link {
+    width: auto;
+    white-space: nowrap;
+    border-right: none;
+    border-bottom: 2px solid transparent;
+    border-radius: var(--border-radius);
+  }
+  .param-nav-link.active { border-right-color: transparent; border-bottom-color: var(--color-primary); }
+  .param-main { padding: 1rem; }
+}
+
+/* ——————————————————————————————————————
+   MÓVIL GRANDE (max 767px)
+—————————————————————————————————————— */
+@media (max-width: 767.98px) {
+
+  /* Variables ajustadas */
+  :root { --topbar-height: 56px; }
+
+  /* Topbar */
+  .topbar { height: var(--topbar-height); }
+  .topbar .topbar-title { font-size: 0.9rem; }
+  .topbar-user-badge .user-name-badge { display: none; }
+
+  /* Estadísticas: 1 columna en móvil pequeño, 2 en móvil grande */
+  .stats-row .col {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  .stat-card { padding: 0.875rem 1rem; gap: 0.75rem; }
+  .stat-card .stat-icon { width: 42px; height: 42px; min-width: 42px; }
+  .stat-card .stat-value { font-size: 1.4rem; }
+
+  /* Cabecera de la bandeja */
+  .inbox-header { flex-direction: column; align-items: flex-start; gap: 0.75rem; }
+  .inbox-header .header-actions { width: 100%; }
+  .inbox-header .header-actions .btn { font-size: var(--font-size-xs); }
+
+  /* Tabla */
+  .cases-table-wrapper { border-radius: var(--border-radius); }
+  .table-footer { font-size: 10px; }
+  .table-footer .per-page-label { display: none; }
+
+  /* Detalle caso */
+  .case-detail-header { padding: 1rem; }
+  .case-detail-header .case-id { font-size: 1rem; }
+  .case-detail-header .header-actions { flex-wrap: wrap; gap: 0.5rem; }
+
+  /* Formulario */
+  .form-hero h1 { font-size: 1.25rem; }
+  .fpqrs-type-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-section { padding: 1rem; }
+
+  /* Page content */
+  .page-content { padding: 0.75rem; }
+
+  /* Info card en detalle */
+  .info-card { padding: 1rem; }
+
+  /* Action panel en detalle */
+  .action-panel { padding: 1rem; }
+
+  /* Modal */
+  .modal-radicado { font-size: 1rem; }
+}
+
+/* ——————————————————————————————————————
+   MÓVIL PEQUEÑO (max 575px)
+—————————————————————————————————————— */
+@media (max-width: 575.98px) {
+
+  /* Estadísticas: 1 columna completa */
+  .stats-row .col {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+
+  /* FPQRS type grid: 1 columna */
+  .fpqrs-type-grid { grid-template-columns: repeat(2, 1fr); }
+
+  /* Formulario header */
+  .form-topbar { padding: 0.75rem 1rem; }
+  .form-topbar .form-topbar-title { display: none; }
+
+  /* Ocultar texto de botones secundarios */
+  .btn-text-hide-xs { display: none; }
+
+  /* Paginación compacta */
+  .pagination .page-link { padding: 0.3rem 0.6rem; font-size: var(--font-size-xs); }
+  .pagination .page-item.d-none-xs { display: none !important; }
+
+  /* Toast */
+  .toast-fpqrs { right: 0.75rem; left: 0.75rem; min-width: auto; }
+
+  /* Tabs del caso */
+  .case-tabs .nav-tabs .nav-link { padding: 0.6rem 0.75rem; font-size: 11px; }
+}
+
+/* ——————————————————————————————————————
+   ESCRITORIO GRANDE (min 1400px)
+—————————————————————————————————————— */
+@media (min-width: 1400px) {
+
+  /* Contenido más espacioso */
+  .page-content { padding: 2rem; }
+
+  /* Stats en 4 columnas uniformes */
+  .stats-row .col { flex: 0 0 25%; max-width: 25%; }
+}
+
+/* ——————————————————————————————————————
+   PANTALLAS MEDIANAS (992 - 1199px)
+—————————————————————————————————————— */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+  :root { --sidebar-width: 230px; }
+
+  .sidebar-nav .nav-link span { font-size: 12px; }
+  .sidebar-brand .brand-name { font-size: 0.9rem; }
+}
+
+/* Login: panel de branding más ancho en pantallas grandes */
+@media (min-width: 1280px) {
+  .login-branding { width: 600px; }
+}
+
+/* ——————————————————————————————————————
+   UTILIDADES RESPONSIVE ADICIONALES
+—————————————————————————————————————— */
+
+/* Forzar scroll horizontal en tablas en todos los tamaños */
+.table-responsive-fpqrs {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ocultar columnas menos importantes en tablet */
+@media (max-width: 991.98px) {
+  .col-hide-tablet {
+    display: none !important;
+  }
+}
+
+/* Ocultar columnas menos importantes en móvil */
+@media (max-width: 767.98px) {
+  .col-hide-mobile {
+    display: none !important;
+  }
+}
+
+/* Stack de botones en móvil */
+@media (max-width: 575.98px) {
+  .btn-stack-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  .btn-stack-mobile .btn { width: 100%; }
+}
+
+/* Grid de acción responsive */
+@media (max-width: 767.98px) {
+  .action-grid-mobile {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+}
+
+/* Texto truncado con ellipsis para celdas de tabla */
+.text-truncate-cell {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@media (max-width: 991.98px) {
+  .text-truncate-cell { max-width: 100px; }
+}
+@media (max-width: 767.98px) {
+  .text-truncate-cell { max-width: 80px; }
+}
+
+/* Login: el panel de branding solo se muestra en escritorio (≥992px) */
+@media (min-width: 992px) {
+  .login-branding { display: flex; }
+}
+
+/* Print: ocultar sidebar y topbar */
+@media print {
+  .sidebar, .topbar, .action-panel { display: none !important; }
+  .main-content { margin-left: 0 !important; }
+  .page-content { padding: 0 !important; }
+  .cases-table-wrapper { box-shadow: none; border: 1px solid #ccc; }
+}

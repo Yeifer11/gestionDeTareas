@@ -1,0 +1,686 @@
+/**
+ * GestorFPQRS — main.js
+ * Utilidades compartidas por todas las páginas
+ * Requiere: jQuery 3.x, Bootstrap 5 Bundle
+ */
+
+/* ============================================================
+   0. NAMESPACE GLOBAL
+   Agrupamos todo en window.FPQRS para evitar colisiones
+============================================================ */
+window.FPQRS = window.FPQRS || {};
+
+/* ============================================================
+   1. DATOS (cargados desde cases.json)
+============================================================ */
+FPQRS.data = {
+  estadisticas: {
+    casosActivos: 125, slaVencido: 111, proximosAVencer: 2, cerradosHoy: 1, totalCasos: 205
+  },
+
+  casos: [
+    {
+      "id": "FPQRS-2026-04779", "fechaRadicado": "2026-05-04T18:00:00",
+      "tipo": "Queja", "servicio": "Pagos y Transferencias", "categoria": "Pago PSE",
+      "subcategoria": "Pago PSE no acreditado en destino",
+      "asociado": { "nombre": "Jorge Luis Patiño Restrepo", "identificacion": "CC 71456023", "correo": "jl.patino@empresa.com.co", "celular": "3209876543", "direccion": "Av El Poblado #12-45, Medellín" },
+      "responsable": "Rodrigo Esteban Muñoz", "area": "Operaciones Financieras", "prioridad": "Critica",
+      "estado": "Pendiente de Información", "canal": "App Móvil", "slaHoras": 4,
+      "limiteSLA": "2026-05-04T22:00:00", "tipoCausa": "Falla en pasarela de pago PSE",
+      "descripcion": "Pago PSE por $2.350.000 al banco Davivienda no fue acreditado. Código: PSE-20260503-8847.",
+      "semaforo": "Vencido",
+      "comentarios": [
+        { "id": 1, "autor": "Rodrigo Esteban Muñoz", "fecha": "2026-05-04T19:30:00", "texto": "Se inicia verificación con el área de pagos electrónicos.", "notificado": false },
+        { "id": 2, "autor": "Sofía Martínez", "fecha": "2026-05-04T20:15:00", "texto": "Se requiere soporte del banco destino para confirmar recepción.", "notificado": true },
+        { "id": 3, "autor": "Sistema", "fecha": "2026-05-04T22:01:00", "texto": "SLA vencido. Caso escalado automáticamente.", "notificado": false }
+      ],
+      "adjuntos": [
+        { "nombre": "comprobante_pse.pdf", "tamaño": "245 KB", "fecha": "2026-05-04T18:05:00" },
+        { "nombre": "captura_error.png", "tamaño": "180 KB", "fecha": "2026-05-04T18:05:00" },
+        { "nombre": "extracto_banco.pdf", "tamaño": "512 KB", "fecha": "2026-05-04T18:10:00" }
+      ],
+      "historial": [
+        { "fecha": "2026-05-04T18:00:00", "accion": "Caso radicado", "usuario": "Portal Web", "detalle": "Canal: App Móvil" },
+        { "fecha": "2026-05-04T18:05:00", "accion": "Asignado a responsable", "usuario": "Sistema", "detalle": "Responsable: Rodrigo Esteban Muñoz" },
+        { "fecha": "2026-05-04T22:01:00", "accion": "SLA vencido", "usuario": "Sistema", "detalle": "Caso escalado automáticamente" }
+      ]
+    },
+    {
+      "id": "FPQRS-2026-04758", "fechaRadicado": "2026-05-07T09:00:00",
+      "tipo": "Felicitación", "servicio": "Atención al Asociado", "categoria": "Atención Presencial",
+      "subcategoria": "Felicitación por excelente atención",
+      "asociado": { "nombre": "Sandra Milena Aguirre Torres", "identificacion": "CC 43215678", "correo": "sandra.aguirre@gmail.com", "celular": "3157894512", "direccion": "Calle 45 #78-23, Bogotá" },
+      "responsable": "Valentina Ospina Ríos", "area": "Atención al Asociado", "prioridad": "Baja",
+      "estado": "Cerrado", "canal": "Portal Web", "slaHoras": 48,
+      "limiteSLA": "2026-05-09T09:00:00", "tipoCausa": "Reconocimiento de servicio",
+      "descripcion": "La asociada agradece la excelente atención recibida en la sucursal del centro el día 05/05/2026.",
+      "semaforo": "Cerrado", "comentarios": [], "adjuntos": [],
+      "historial": [
+        { "fecha": "2026-05-07T09:00:00", "accion": "Caso radicado", "usuario": "Portal Web", "detalle": "Canal: Portal Web" },
+        { "fecha": "2026-05-07T10:00:00", "accion": "Caso cerrado", "usuario": "Valentina Ospina Ríos", "detalle": "Caso de felicitación, sin acción requerida" }
+      ]
+    },
+    {
+      "id": "FPQRS-2026-04290", "fechaRadicado": "2026-05-07T10:30:00",
+      "tipo": "Sugerencia", "servicio": "Pagos y Transferencias", "categoria": "Transferencias Nacionales",
+      "subcategoria": "Comprobante de transferencia",
+      "asociado": { "nombre": "Yolanda Cecilia Prada Niño", "identificacion": "CC 52369874", "correo": "yolanda.prada@hotmail.com", "celular": "3201234567", "direccion": "Carrera 15 #32-67, Cali" },
+      "responsable": "Jorge Iván Castillo", "area": "Operaciones Financieras", "prioridad": "Baja",
+      "estado": "Radicado", "canal": "App Móvil", "slaHoras": 24,
+      "limiteSLA": "2026-05-08T10:30:00", "tipoCausa": "Mejora de proceso",
+      "descripcion": "La asociada sugiere que el comprobante de transferencia llegue también por WhatsApp, no solo por correo.",
+      "semaforo": "En tiempo", "comentarios": [], "adjuntos": [],
+      "historial": [
+        { "fecha": "2026-05-07T10:30:00", "accion": "Caso radicado", "usuario": "App Móvil", "detalle": "Canal: App Móvil" }
+      ]
+    },
+    {
+      "id": "FPQRS-2026-04760", "fechaRadicado": "2026-05-07T11:00:00",
+      "tipo": "Sugerencia", "servicio": "Canales Digitales", "categoria": "App Móvil",
+      "subcategoria": "Sugerencia de nueva funcionalidad en app",
+      "asociado": { "nombre": "Andrés Camilo Rojas Velandia", "identificacion": "CC 1098234567", "correo": "andres.rojas@empresa.co", "celular": "3112345678", "direccion": "Calle 10 #20-30, Bucaramanga" },
+      "responsable": "Iván Darío Zapata", "area": "Canales Digitales", "prioridad": "Baja",
+      "estado": "Radicado", "canal": "App Móvil", "slaHoras": 120,
+      "limiteSLA": "2026-05-12T11:00:00", "tipoCausa": "Innovación de producto",
+      "descripcion": "El asociado sugiere agregar la funcionalidad de huella digital para autenticación en la app.",
+      "semaforo": "En tiempo", "comentarios": [], "adjuntos": [],
+      "historial": [
+        { "fecha": "2026-05-07T11:00:00", "accion": "Caso radicado", "usuario": "App Móvil", "detalle": "Canal: App Móvil" }
+      ]
+    },
+    {
+      "id": "FPQRS-2026-04510", "fechaRadicado": "2026-05-07T12:00:00",
+      "tipo": "Sugerencia", "servicio": "Atención al Asociado", "categoria": "Atención Virtual",
+      "subcategoria": "Chat sin respuesta oportuna",
+      "asociado": { "nombre": "Beatriz Elena Montoya Arango", "identificacion": "CC 43876543", "correo": "beatriz.montoya@correo.com", "celular": "3189876543", "direccion": "Av 80 #45-12, Medellín" },
+      "responsable": "Patricia Inés Agudelo", "area": "Atención al Asociado", "prioridad": "Normal",
+      "estado": "Radicado", "canal": "Chat Web", "slaHoras": 24,
+      "limiteSLA": "2026-05-08T12:00:00", "tipoCausa": "Falla en canal de atención",
+      "descripcion": "La asociada informa que el chat de atención estuvo sin respuesta por más de 2 horas el día 06/05/2026.",
+      "semaforo": "En tiempo", "comentarios": [], "adjuntos": [],
+      "historial": [
+        { "fecha": "2026-05-07T12:00:00", "accion": "Caso radicado", "usuario": "Chat Web", "detalle": "Canal: Chat Web" }
+      ]
+    },
+    {
+      "id": "FPQRS-2026-04751", "fechaRadicado": "2026-05-06T08:00:00",
+      "tipo": "Reclamo", "servicio": "Ahorro y Captación", "categoria": "Cuenta de Ahorro",
+      "subcategoria": "Saldo incorrecto en cuenta",
+      "asociado": { "nombre": "Hernán Darío Quintero Salazar", "identificacion": "CC 71234567", "correo": "hernan.quintero@correo.com", "celular": "3167654321", "direccion": "Carrera 70 #50-20, Medellín" },
+      "responsable": "Marcela Suárez Peña", "area": "Ahorro y Captación", "prioridad": "Alta",
+      "estado": "En Gestión", "canal": "Presencial", "slaHoras": 24,
+      "limiteSLA": "2026-05-07T08:00:00", "tipoCausa": "Error de sistema",
+      "descripcion": "El asociado reporta que su saldo es de $1.250.000 pero en el extracto aparece $980.000. Solicita revisión urgente.",
+      "semaforo": "Próximo a vencer",
+      "comentarios": [{ "id": 1, "autor": "Marcela Suárez Peña", "fecha": "2026-05-06T09:00:00", "texto": "Se inicia revisión de movimientos de la cuenta desde el 01/05/2026.", "notificado": false }],
+      "adjuntos": [{ "nombre": "extracto_mayo.pdf", "tamaño": "320 KB", "fecha": "2026-05-06T08:10:00" }],
+      "historial": [
+        { "fecha": "2026-05-06T08:00:00", "accion": "Caso radicado", "usuario": "Presencial", "detalle": "Canal: Presencial" },
+        { "fecha": "2026-05-06T14:00:00", "accion": "Estado cambiado", "usuario": "Marcela Suárez Peña", "detalle": "Radicado → En Gestión" }
+      ]
+    },
+    {
+      "id": "FPQRS-2026-04700", "fechaRadicado": "2026-05-06T09:00:00",
+      "tipo": "Sugerencia", "servicio": "Canales Digitales", "categoria": "Portal Web",
+      "subcategoria": "Sugerencia de mejora en portal web",
+      "asociado": { "nombre": "Patricia Inés Londoño Vélez", "identificacion": "CC 43567890", "correo": "patricia.londono@correo.com", "celular": "3145678901", "direccion": "Calle 34 #12-56, Pereira" },
+      "responsable": "Iván Darío Zapata", "area": "Canales Digitales", "prioridad": "Baja",
+      "estado": "Radicado", "canal": "Portal Web", "slaHoras": 24,
+      "limiteSLA": "2026-05-07T09:00:00", "tipoCausa": "Mejora de UX",
+      "descripcion": "La asociada sugiere mejorar la usabilidad del portal web, especialmente el menú de navegación en móviles.",
+      "semaforo": "Próximo a vencer", "comentarios": [], "adjuntos": [],
+      "historial": [
+        { "fecha": "2026-05-06T09:00:00", "accion": "Caso radicado", "usuario": "Portal Web", "detalle": "Canal: Portal Web" }
+      ]
+    },
+    {
+      "id": "FPQRS-2026-04035", "fechaRadicado": "2026-05-06T10:00:00",
+      "tipo": "Sugerencia", "servicio": "Ahorro y Captación", "categoria": "CDT",
+      "subcategoria": "Error en tasa de CDT",
+      "asociado": { "nombre": "Diana Marcela Ríos Castillo", "identificacion": "CC 52456789", "correo": "diana.rios@empresa.com", "celular": "3156789012", "direccion": "Carrera 43 #25-78, Barranquilla" },
+      "responsable": "Camilo Ernesto Herrera", "area": "Ahorro y Captación", "prioridad": "Baja",
+      "estado": "Radicado", "canal": "Call Center", "slaHoras": 120,
+      "limiteSLA": "2026-05-11T10:00:00", "tipoCausa": "Error en información de producto",
+      "descripcion": "La asociada reporta que la tasa ofrecida para su CDT no corresponde a la registrada en el sistema.",
+      "semaforo": "En tiempo", "comentarios": [], "adjuntos": [],
+      "historial": [
+        { "fecha": "2026-05-06T10:00:00", "accion": "Caso radicado", "usuario": "Call Center", "detalle": "Canal: Call Center" }
+      ]
+    },
+    {"id":"FPQRS-2026-03690","fechaRadicado":"2026-05-01T08:00:00","tipo":"Petición","servicio":"Crédito","categoria":"Crédito de Vivienda","subcategoria":"Cobro de seguro no autorizado","asociado":{"nombre":"Lina María Trujillo Ocampo","identificacion":"CC 44219124","correo":"lina.maria@correo.com","celular":"3125109155","direccion":"Calle 38 #61-37, Bucaramanga"},"responsable":"Valentina Ospina Ríos","area":"Crédito","prioridad":"Alta","estado":"Cerrado","canal":"App Móvil","slaHoras":72,"limiteSLA":"2026-05-04T13:00:00","tipoCausa":"Cobro de seguro no autorizado","descripcion":"Caso relacionado con cobro de seguro no autorizado en el servicio de Crédito.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T08:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04269","fechaRadicado":"2026-05-01T19:00:00","tipo":"Sugerencia","servicio":"Canales Digitales","categoria":"Cajeros Automáticos","subcategoria":"Cajero fuera de servicio","asociado":{"nombre":"Julián Esteban Vélez Correa","identificacion":"CC 98893587","correo":"julian.esteban@correo.com","celular":"3101617019","direccion":"Calle 38 #61-55, Bogotá"},"responsable":"Rodrigo Esteban Muñoz","area":"Canales Digitales","prioridad":"Critica","estado":"Pendiente de Información","canal":"Chat Web","slaHoras":72,"limiteSLA":"2026-05-05T00:00:00","tipoCausa":"Cajero fuera de servicio","descripcion":"Caso relacionado con cajero fuera de servicio en el servicio de Canales Digitales.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T19:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-03014","fechaRadicado":"2026-05-03T09:00:00","tipo":"Sugerencia","servicio":"Crédito","categoria":"Crédito de Consumo","subcategoria":"Tasa de interés incorrecta","asociado":{"nombre":"Andrés Camilo Rojas Vélez","identificacion":"CC 81089953","correo":"andres.camilo@correo.com","celular":"3160517411","direccion":"Calle 61 #5-52, Pereira"},"responsable":"Carlos Andrés Moreno","area":"Crédito","prioridad":"Normal","estado":"Pendiente de Información","canal":"Presencial","slaHoras":4,"limiteSLA":"2026-05-03T18:00:00","tipoCausa":"Tasa de interés incorrecta","descripcion":"Caso relacionado con tasa de interés incorrecta en el servicio de Crédito.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-03T09:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-04628","fechaRadicado":"2026-05-05T10:00:00","tipo":"Sugerencia","servicio":"Pagos y Transferencias","categoria":"Transferencias Internacionales","subcategoria":"Demora en giro internacional","asociado":{"nombre":"Luz Adriana Gómez Tabares","identificacion":"CC 64625403","correo":"luz.adriana@correo.com","celular":"3160508129","direccion":"Calle 52 #77-14, Cali"},"responsable":"Diana Carolina Ríos","area":"Pagos y Transferencias","prioridad":"Critica","estado":"Pendiente de Información","canal":"Chat Web","slaHoras":120,"limiteSLA":"2026-05-10T15:00:00","tipoCausa":"Demora en giro internacional","descripcion":"Caso relacionado con demora en giro internacional en el servicio de Pagos y Transferencias.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-05T10:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-04020","fechaRadicado":"2026-05-02T17:00:00","tipo":"Sugerencia","servicio":"Canales Digitales","categoria":"Cajeros Automáticos","subcategoria":"Retención de dinero sin entrega","asociado":{"nombre":"Carolina Andrea Mesa Duque","identificacion":"CC 81025700","correo":"carolina.andrea@correo.com","celular":"3165381756","direccion":"Calle 19 #16-84, Barranquilla"},"responsable":"Adriana Milena Cortés","area":"Canales Digitales","prioridad":"Critica","estado":"Pendiente de Información","canal":"App Móvil","slaHoras":24,"limiteSLA":"2026-05-03T22:00:00","tipoCausa":"Retención de dinero sin entrega","descripcion":"Caso relacionado con retención de dinero sin entrega en el servicio de Canales Digitales.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T17:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04929","fechaRadicado":"2026-05-02T15:00:00","tipo":"Felicitación","servicio":"Inversiones","categoria":"Portafolio de Acciones","subcategoria":"Orden no ejecutada","asociado":{"nombre":"Hernán Darío Quintero Salazar","identificacion":"CC 97297905","correo":"hernan.dario@correo.com","celular":"3146401560","direccion":"Calle 51 #32-39, Ibagué"},"responsable":"Jorge Iván Castillo","area":"Inversiones","prioridad":"Normal","estado":"Anulado","canal":"Call Center","slaHoras":72,"limiteSLA":"2026-05-05T20:00:00","tipoCausa":"Orden no ejecutada","descripcion":"Caso relacionado con orden no ejecutada en el servicio de Inversiones.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T15:00:00","accion":"Caso radicado","usuario":"Call Center","detalle":"Canal: Call Center"}]},
+    {"id":"FPQRS-2026-03593","fechaRadicado":"2026-05-01T17:00:00","tipo":"Petición","servicio":"Pagos y Transferencias","categoria":"Transferencias Nacionales","subcategoria":"Transferencia no reflejada","asociado":{"nombre":"Patricia Inés Londoño Vélez","identificacion":"CC 15611268","correo":"patricia.ines@correo.com","celular":"3152566038","direccion":"Calle 66 #12-78, Cartagena"},"responsable":"Marcela Suárez Peña","area":"Pagos y Transferencias","prioridad":"Normal","estado":"Cerrado","canal":"Call Center","slaHoras":24,"limiteSLA":"2026-05-02T22:00:00","tipoCausa":"Transferencia no reflejada","descripcion":"Caso relacionado con transferencia no reflejada en el servicio de Pagos y Transferencias.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T17:00:00","accion":"Caso radicado","usuario":"Call Center","detalle":"Canal: Call Center"}]},
+    {"id":"FPQRS-2026-03799","fechaRadicado":"2026-05-04T13:00:00","tipo":"Reclamo","servicio":"Vinculación y Retiro","categoria":"Retiro de Asociado","subcategoria":"Devolución de aportes no realizada","asociado":{"nombre":"Natalia Andrea Cuartas Pérez","identificacion":"CC 82249368","correo":"natalia.andrea@correo.com","celular":"3110932150","direccion":"Calle 79 #23-10, Manizales"},"responsable":"Marcela Suárez Peña","area":"Vinculación y Retiro","prioridad":"Alta","estado":"Anulado","canal":"Call Center","slaHoras":120,"limiteSLA":"2026-05-09T18:00:00","tipoCausa":"Devolución de aportes no realizada","descripcion":"Caso relacionado con devolución de aportes no realizada en el servicio de Vinculación y Retiro.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-04T13:00:00","accion":"Caso radicado","usuario":"Call Center","detalle":"Canal: Call Center"}]},
+    {"id":"FPQRS-2026-04754","fechaRadicado":"2026-05-02T10:00:00","tipo":"Petición","servicio":"Pagos y Transferencias","categoria":"Transferencias Nacionales","subcategoria":"Transferencia no reflejada","asociado":{"nombre":"Julián Esteban Vélez Correa","identificacion":"CC 81049764","correo":"julian.esteban@correo.com","celular":"3167176322","direccion":"Calle 10 #84-3, Cartagena"},"responsable":"Diana Carolina Ríos","area":"Pagos y Transferencias","prioridad":"Normal","estado":"Anulado","canal":"Presencial","slaHoras":4,"limiteSLA":"2026-05-02T19:00:00","tipoCausa":"Transferencia no reflejada","descripcion":"Caso relacionado con transferencia no reflejada en el servicio de Pagos y Transferencias.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T10:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-03416","fechaRadicado":"2026-05-02T07:00:00","tipo":"Sugerencia","servicio":"Educación Cooperativa","categoria":"Cursos Financieros","subcategoria":"Falla en plataforma de curso","asociado":{"nombre":"Claudia Patricia Henao Zuluaga","identificacion":"CC 50645302","correo":"claudia.patricia@correo.com","celular":"3182654790","direccion":"Calle 11 #85-17, Bucaramanga"},"responsable":"Diana Carolina Ríos","area":"Educación Cooperativa","prioridad":"Alta","estado":"Radicado","canal":"Presencial","slaHoras":120,"limiteSLA":"2026-05-07T12:00:00","tipoCausa":"Falla en plataforma de curso","descripcion":"Caso relacionado con falla en plataforma de curso en el servicio de Educación Cooperativa.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T07:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-03329","fechaRadicado":"2026-05-05T11:00:00","tipo":"Felicitación","servicio":"Centrales de Riesgo","categoria":"Reporte en DataCrédito","subcategoria":"Reporte negativo incorrecto","asociado":{"nombre":"Gustavo Adolfo Ramírez León","identificacion":"CC 76932309","correo":"gustavo.adolfo@correo.com","celular":"3192505963","direccion":"Calle 89 #49-13, Bogotá"},"responsable":"Valentina Ospina Ríos","area":"Centrales de Riesgo","prioridad":"Alta","estado":"En Gestión","canal":"App Móvil","slaHoras":120,"limiteSLA":"2026-05-10T16:00:00","tipoCausa":"Reporte negativo incorrecto","descripcion":"Caso relacionado con reporte negativo incorrecto en el servicio de Centrales de Riesgo.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-05T11:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04381","fechaRadicado":"2026-05-05T17:00:00","tipo":"Sugerencia","servicio":"Canales Digitales","categoria":"Portal Web","subcategoria":"Sugerencia de mejora en portal web","asociado":{"nombre":"Luz Adriana Gómez Tabares","identificacion":"CC 84139956","correo":"luz.adriana@correo.com","celular":"3116452673","direccion":"Calle 66 #5-45, Armenia"},"responsable":"Carlos Andrés Moreno","area":"Canales Digitales","prioridad":"Critica","estado":"Radicado","canal":"Presencial","slaHoras":72,"limiteSLA":"2026-05-08T22:00:00","tipoCausa":"Sugerencia de mejora en portal web","descripcion":"Caso relacionado con sugerencia de mejora en portal web en el servicio de Canales Digitales.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-05T17:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-04019","fechaRadicado":"2026-05-01T09:00:00","tipo":"Queja","servicio":"Vinculación y Retiro","categoria":"Apertura de Cuenta","subcategoria":"Documentos rechazados sin causa","asociado":{"nombre":"Mónica Lucía Restrepo Vargas","identificacion":"CC 74907579","correo":"monica.lucia@correo.com","celular":"3152003013","direccion":"Calle 33 #39-65, Bogotá"},"responsable":"Valentina Ospina Ríos","area":"Vinculación y Retiro","prioridad":"Alta","estado":"Radicado","canal":"Call Center","slaHoras":120,"limiteSLA":"2026-05-06T14:00:00","tipoCausa":"Documentos rechazados sin causa","descripcion":"Caso relacionado con documentos rechazados sin causa en el servicio de Vinculación y Retiro.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T09:00:00","accion":"Caso radicado","usuario":"Call Center","detalle":"Canal: Call Center"}]},
+    {"id":"FPQRS-2026-04911","fechaRadicado":"2026-05-07T07:00:00","tipo":"Sugerencia","servicio":"Seguros y Protección","categoria":"Seguro de Vida","subcategoria":"Negación de pago de siniestro","asociado":{"nombre":"Andrés Camilo Rojas Vélez","identificacion":"CC 33549313","correo":"andres.camilo@correo.com","celular":"3174520126","direccion":"Calle 57 #19-75, Medellín"},"responsable":"Marcela Suárez Peña","area":"Seguros y Protección","prioridad":"Normal","estado":"Radicado","canal":"Chat Web","slaHoras":72,"limiteSLA":"2026-05-10T12:00:00","tipoCausa":"Negación de pago de siniestro","descripcion":"Caso relacionado con negación de pago de siniestro en el servicio de Seguros y Protección.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-07T07:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-03142","fechaRadicado":"2026-05-01T10:00:00","tipo":"Queja","servicio":"Certificaciones y Documentos","categoria":"Carta de Deuda","subcategoria":"Demora en expedición de carta de deuda","asociado":{"nombre":"Fabián Eduardo Salazar Mejía","identificacion":"CC 42253589","correo":"fabian.eduardo@correo.com","celular":"3122134987","direccion":"Calle 49 #84-82, Cali"},"responsable":"Carlos Andrés Moreno","area":"Certificaciones y Documentos","prioridad":"Critica","estado":"Radicado","canal":"App Móvil","slaHoras":4,"limiteSLA":"2026-05-01T19:00:00","tipoCausa":"Demora en expedición de carta de deuda","descripcion":"Caso relacionado con demora en expedición de carta de deuda en el servicio de Certificaciones y Documentos.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T10:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04569","fechaRadicado":"2026-05-06T13:00:00","tipo":"Sugerencia","servicio":"Vinculación y Retiro","categoria":"Apertura de Cuenta","subcategoria":"Demora en apertura de cuenta","asociado":{"nombre":"Edwin Fernando Galvis Rincón","identificacion":"CC 28342657","correo":"edwin.fernando@correo.com","celular":"3147440019","direccion":"Calle 26 #16-32, Cali"},"responsable":"Rodrigo Esteban Muñoz","area":"Vinculación y Retiro","prioridad":"Normal","estado":"Cerrado","canal":"Presencial","slaHoras":24,"limiteSLA":"2026-05-07T18:00:00","tipoCausa":"Demora en apertura de cuenta","descripcion":"Caso relacionado con demora en apertura de cuenta en el servicio de Vinculación y Retiro.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-06T13:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-03215","fechaRadicado":"2026-05-06T17:00:00","tipo":"Petición","servicio":"Centrales de Riesgo","categoria":"Reporte en DataCrédito","subcategoria":"Reporte negativo incorrecto","asociado":{"nombre":"Andrés Camilo Rojas Vélez","identificacion":"CC 80556390","correo":"andres.camilo@correo.com","celular":"3153875704","direccion":"Calle 16 #60-87, Cartagena"},"responsable":"Marcela Suárez Peña","area":"Centrales de Riesgo","prioridad":"Alta","estado":"Pendiente de Información","canal":"Portal Web","slaHoras":120,"limiteSLA":"2026-05-11T22:00:00","tipoCausa":"Reporte negativo incorrecto","descripcion":"Caso relacionado con reporte negativo incorrecto en el servicio de Centrales de Riesgo.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-06T17:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-03250","fechaRadicado":"2026-05-07T17:00:00","tipo":"Felicitación","servicio":"Canales Digitales","categoria":"Banca en Línea","subcategoria":"Transacción duplicada","asociado":{"nombre":"Beatriz Elena Montoya Gil","identificacion":"CC 85241438","correo":"beatriz.elena@correo.com","celular":"3163815008","direccion":"Calle 27 #52-4, Cartagena"},"responsable":"Patricia Inés Agudelo","area":"Canales Digitales","prioridad":"Alta","estado":"Anulado","canal":"Portal Web","slaHoras":72,"limiteSLA":"2026-05-10T22:00:00","tipoCausa":"Transacción duplicada","descripcion":"Caso relacionado con transacción duplicada en el servicio de Canales Digitales.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-07T17:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-04544","fechaRadicado":"2026-05-02T09:00:00","tipo":"Felicitación","servicio":"Canales Digitales","categoria":"App Móvil","subcategoria":"Error al cargar saldo","asociado":{"nombre":"Natalia Andrea Cuartas Pérez","identificacion":"CC 95726070","correo":"natalia.andrea@correo.com","celular":"3103802717","direccion":"Calle 36 #76-56, Armenia"},"responsable":"Valentina Ospina Ríos","area":"Canales Digitales","prioridad":"Critica","estado":"Radicado","canal":"Chat Web","slaHoras":120,"limiteSLA":"2026-05-07T14:00:00","tipoCausa":"Error al cargar saldo","descripcion":"Caso relacionado con error al cargar saldo en el servicio de Canales Digitales.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T09:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-04465","fechaRadicado":"2026-05-04T19:00:00","tipo":"Petición","servicio":"Atención al Asociado","categoria":"Atención Presencial","subcategoria":"Demora en atención","asociado":{"nombre":"Beatriz Elena Montoya Gil","identificacion":"CC 46108649","correo":"beatriz.elena@correo.com","celular":"3125935874","direccion":"Calle 30 #5-45, Bogotá"},"responsable":"Iván Darío Zapata","area":"Atención al Asociado","prioridad":"Baja","estado":"Cerrado","canal":"App Móvil","slaHoras":120,"limiteSLA":"2026-05-10T00:00:00","tipoCausa":"Demora en atención","descripcion":"Caso relacionado con demora en atención en el servicio de Atención al Asociado.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-04T19:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04528","fechaRadicado":"2026-05-02T12:00:00","tipo":"Felicitación","servicio":"Pagos y Transferencias","categoria":"Transferencias Nacionales","subcategoria":"Comprobante de transferencia no recibido","asociado":{"nombre":"Fabián Eduardo Salazar Mejía","identificacion":"CC 66218289","correo":"fabian.eduardo@correo.com","celular":"3119252652","direccion":"Calle 5 #76-79, Armenia"},"responsable":"Marcela Suárez Peña","area":"Pagos y Transferencias","prioridad":"Baja","estado":"Anulado","canal":"Chat Web","slaHoras":4,"limiteSLA":"2026-05-02T21:00:00","tipoCausa":"Comprobante de transferencia no recibido","descripcion":"Caso relacionado con comprobante de transferencia no recibido en el servicio de Pagos y Transferencias.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T12:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-04208","fechaRadicado":"2026-05-05T10:00:00","tipo":"Sugerencia","servicio":"Pagos y Transferencias","categoria":"Transferencias Nacionales","subcategoria":"Transferencia no reflejada","asociado":{"nombre":"Gustavo Adolfo Ramírez León","identificacion":"CC 77847358","correo":"gustavo.adolfo@correo.com","celular":"3167914856","direccion":"Calle 60 #10-6, Cali"},"responsable":"Jorge Iván Castillo","area":"Pagos y Transferencias","prioridad":"Critica","estado":"Pendiente de Información","canal":"Portal Web","slaHoras":24,"limiteSLA":"2026-05-06T15:00:00","tipoCausa":"Transferencia no reflejada","descripcion":"Caso relacionado con transferencia no reflejada en el servicio de Pagos y Transferencias.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-05T10:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-03910","fechaRadicado":"2026-05-01T12:00:00","tipo":"Sugerencia","servicio":"Crédito","categoria":"Refinanciación de Crédito","subcategoria":"Tasa no acordada","asociado":{"nombre":"Jorge Luis Patiño Restrepo","identificacion":"CC 84402585","correo":"jorge.luis@correo.com","celular":"3182035841","direccion":"Calle 13 #23-21, Armenia"},"responsable":"Rodrigo Esteban Muñoz","area":"Crédito","prioridad":"Normal","estado":"Radicado","canal":"App Móvil","slaHoras":4,"limiteSLA":"2026-05-01T21:00:00","tipoCausa":"Tasa no acordada","descripcion":"Caso relacionado con tasa no acordada en el servicio de Crédito.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T12:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04148","fechaRadicado":"2026-05-07T15:00:00","tipo":"Sugerencia","servicio":"Atención al Asociado","categoria":"Call Center","subcategoria":"Información incorrecta brindada","asociado":{"nombre":"Jorge Luis Patiño Restrepo","identificacion":"CC 83688087","correo":"jorge.luis@correo.com","celular":"3151999087","direccion":"Calle 53 #2-78, Medellín"},"responsable":"Camilo Ernesto Herrera","area":"Atención al Asociado","prioridad":"Baja","estado":"Pendiente de Información","canal":"Portal Web","slaHoras":120,"limiteSLA":"2026-05-12T20:00:00","tipoCausa":"Información incorrecta brindada","descripcion":"Caso relacionado con información incorrecta brindada en el servicio de Atención al Asociado.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-07T15:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-03459","fechaRadicado":"2026-05-01T07:00:00","tipo":"Queja","servicio":"Crédito","categoria":"Refinanciación de Crédito","subcategoria":"Tasa no acordada","asociado":{"nombre":"Mónica Lucía Restrepo Vargas","identificacion":"CC 53192111","correo":"monica.lucia@correo.com","celular":"3195056430","direccion":"Calle 26 #58-16, Pereira"},"responsable":"Marcela Suárez Peña","area":"Crédito","prioridad":"Normal","estado":"Pendiente de Información","canal":"App Móvil","slaHoras":120,"limiteSLA":"2026-05-06T12:00:00","tipoCausa":"Tasa no acordada","descripcion":"Caso relacionado con tasa no acordada en el servicio de Crédito.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T07:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04388","fechaRadicado":"2026-05-06T16:00:00","tipo":"Petición","servicio":"Seguros y Protección","categoria":"Seguro de Desempleo","subcategoria":"Demora en activación","asociado":{"nombre":"Natalia Andrea Cuartas Pérez","identificacion":"CC 54351344","correo":"natalia.andrea@correo.com","celular":"3102370849","direccion":"Calle 74 #2-53, Manizales"},"responsable":"Adriana Milena Cortés","area":"Seguros y Protección","prioridad":"Critica","estado":"Cerrado","canal":"Call Center","slaHoras":4,"limiteSLA":"2026-05-07T01:00:00","tipoCausa":"Demora en activación","descripcion":"Caso relacionado con demora en activación en el servicio de Seguros y Protección.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-06T16:00:00","accion":"Caso radicado","usuario":"Call Center","detalle":"Canal: Call Center"}]},
+    {"id":"FPQRS-2026-04615","fechaRadicado":"2026-05-01T12:00:00","tipo":"Reclamo","servicio":"Cartera y Cobranza","categoria":"Refinanciación de Deuda","subcategoria":"Tasa no acordada","asociado":{"nombre":"Luz Adriana Gómez Tabares","identificacion":"CC 56289280","correo":"luz.adriana@correo.com","celular":"3159364211","direccion":"Calle 24 #19-81, Medellín"},"responsable":"Iván Darío Zapata","area":"Cartera y Cobranza","prioridad":"Alta","estado":"Anulado","canal":"Presencial","slaHoras":120,"limiteSLA":"2026-05-06T17:00:00","tipoCausa":"Tasa no acordada","descripcion":"Caso relacionado con tasa no acordada en el servicio de Cartera y Cobranza.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T12:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-04914","fechaRadicado":"2026-05-02T14:00:00","tipo":"Reclamo","servicio":"Seguros y Protección","categoria":"Seguro de Hogar","subcategoria":"Negación de cobertura","asociado":{"nombre":"Diana Marcela Ríos Castillo","identificacion":"CC 31146968","correo":"diana.marcela@correo.com","celular":"3197731606","direccion":"Calle 33 #62-56, Cali"},"responsable":"Patricia Inés Agudelo","area":"Seguros y Protección","prioridad":"Alta","estado":"Radicado","canal":"Chat Web","slaHoras":72,"limiteSLA":"2026-05-05T19:00:00","tipoCausa":"Negación de cobertura","descripcion":"Caso relacionado con negación de cobertura en el servicio de Seguros y Protección.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T14:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-04107","fechaRadicado":"2026-05-05T18:00:00","tipo":"Felicitación","servicio":"Certificaciones y Documentos","categoria":"Paz y Salvo","subcategoria":"Demora en expedición de paz y salvo","asociado":{"nombre":"Patricia Inés Londoño Vélez","identificacion":"CC 33041127","correo":"patricia.ines@correo.com","celular":"3174211990","direccion":"Calle 6 #33-1, Bogotá"},"responsable":"Camilo Ernesto Herrera","area":"Certificaciones y Documentos","prioridad":"Baja","estado":"En Gestión","canal":"Chat Web","slaHoras":4,"limiteSLA":"2026-05-06T03:00:00","tipoCausa":"Demora en expedición de paz y salvo","descripcion":"Caso relacionado con demora en expedición de paz y salvo en el servicio de Certificaciones y Documentos.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-05T18:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-03707","fechaRadicado":"2026-05-05T10:00:00","tipo":"Sugerencia","servicio":"Crédito","categoria":"Refinanciación de Crédito","subcategoria":"Tasa no acordada","asociado":{"nombre":"Sandra Milena Aguirre Toro","identificacion":"CC 16816020","correo":"sandra.milena@correo.com","celular":"3110996585","direccion":"Calle 62 #59-25, Pereira"},"responsable":"Adriana Milena Cortés","area":"Crédito","prioridad":"Critica","estado":"En Gestión","canal":"Portal Web","slaHoras":24,"limiteSLA":"2026-05-06T15:00:00","tipoCausa":"Tasa no acordada","descripcion":"Caso relacionado con tasa no acordada en el servicio de Crédito.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-05T10:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-03816","fechaRadicado":"2026-05-06T16:00:00","tipo":"Queja","servicio":"Atención al Asociado","categoria":"Call Center","subcategoria":"Información incorrecta brindada","asociado":{"nombre":"Beatriz Elena Montoya Gil","identificacion":"CC 48091056","correo":"beatriz.elena@correo.com","celular":"3176973764","direccion":"Calle 44 #32-6, Bucaramanga"},"responsable":"Jorge Iván Castillo","area":"Atención al Asociado","prioridad":"Alta","estado":"En Gestión","canal":"App Móvil","slaHoras":120,"limiteSLA":"2026-05-11T21:00:00","tipoCausa":"Información incorrecta brindada","descripcion":"Caso relacionado con información incorrecta brindada en el servicio de Atención al Asociado.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-06T16:00:00","accion":"Caso radicado","usuario":"App Móvil","detalle":"Canal: App Móvil"}]},
+    {"id":"FPQRS-2026-04421","fechaRadicado":"2026-05-02T08:00:00","tipo":"Sugerencia","servicio":"Canales Digitales","categoria":"Portal Web","subcategoria":"Error al iniciar sesión","asociado":{"nombre":"Edwin Fernando Galvis Rincón","identificacion":"CC 16458918","correo":"edwin.fernando@correo.com","celular":"3177826151","direccion":"Calle 70 #17-12, Cali"},"responsable":"Carlos Andrés Moreno","area":"Canales Digitales","prioridad":"Normal","estado":"Cerrado","canal":"Portal Web","slaHoras":24,"limiteSLA":"2026-05-03T13:00:00","tipoCausa":"Error al iniciar sesión","descripcion":"Caso relacionado con error al iniciar sesión en el servicio de Canales Digitales.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T08:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-04567","fechaRadicado":"2026-05-02T08:00:00","tipo":"Felicitación","servicio":"Centrales de Riesgo","categoria":"Reporte en TransUnión","subcategoria":"Reporte duplicado","asociado":{"nombre":"Diana Marcela Ríos Castillo","identificacion":"CC 50957670","correo":"diana.marcela@correo.com","celular":"3157066664","direccion":"Calle 41 #46-13, Cali"},"responsable":"Valentina Ospina Ríos","area":"Centrales de Riesgo","prioridad":"Critica","estado":"Pendiente de Información","canal":"Portal Web","slaHoras":4,"limiteSLA":"2026-05-02T17:00:00","tipoCausa":"Reporte duplicado","descripcion":"Caso relacionado con reporte duplicado en el servicio de Centrales de Riesgo.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T08:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-03120","fechaRadicado":"2026-05-02T16:00:00","tipo":"Petición","servicio":"Certificaciones y Documentos","categoria":"Certificado de Saldo","subcategoria":"Certificado con error","asociado":{"nombre":"Luz Adriana Gómez Tabares","identificacion":"CC 85057203","correo":"luz.adriana@correo.com","celular":"3101370888","direccion":"Calle 15 #11-40, Bogotá"},"responsable":"Carlos Andrés Moreno","area":"Certificaciones y Documentos","prioridad":"Critica","estado":"Anulado","canal":"Call Center","slaHoras":72,"limiteSLA":"2026-05-05T21:00:00","tipoCausa":"Certificado con error","descripcion":"Caso relacionado con certificado con error en el servicio de Certificaciones y Documentos.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T16:00:00","accion":"Caso radicado","usuario":"Call Center","detalle":"Canal: Call Center"}]},
+    {"id":"FPQRS-2026-04886","fechaRadicado":"2026-05-07T09:00:00","tipo":"Felicitación","servicio":"Cartera y Cobranza","categoria":"Cobro Prejurídico","subcategoria":"Falta de notificación previa","asociado":{"nombre":"Carolina Andrea Mesa Duque","identificacion":"CC 10092034","correo":"carolina.andrea@correo.com","celular":"3143762000","direccion":"Calle 26 #34-25, Ibagué"},"responsable":"Marcela Suárez Peña","area":"Cartera y Cobranza","prioridad":"Alta","estado":"Anulado","canal":"Portal Web","slaHoras":120,"limiteSLA":"2026-05-12T14:00:00","tipoCausa":"Falta de notificación previa","descripcion":"Caso relacionado con falta de notificación previa en el servicio de Cartera y Cobranza.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-07T09:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-04758","fechaRadicado":"2026-05-01T19:00:00","tipo":"Queja","servicio":"Certificaciones y Documentos","categoria":"Certificado de Saldo","subcategoria":"Demora en expedición de certificado","asociado":{"nombre":"Andrés Camilo Rojas Vélez","identificacion":"CC 23237384","correo":"andres.camilo@correo.com","celular":"3143996706","direccion":"Calle 80 #41-80, Barranquilla"},"responsable":"Carlos Andrés Moreno","area":"Certificaciones y Documentos","prioridad":"Critica","estado":"Anulado","canal":"Presencial","slaHoras":24,"limiteSLA":"2026-05-03T00:00:00","tipoCausa":"Demora en expedición de certificado","descripcion":"Caso relacionado con demora en expedición de certificado en el servicio de Certificaciones y Documentos.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-01T19:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-03152","fechaRadicado":"2026-05-06T18:00:00","tipo":"Sugerencia","servicio":"Canales Digitales","categoria":"Cajeros Automáticos","subcategoria":"Retención de dinero sin entrega","asociado":{"nombre":"Mónica Lucía Restrepo Vargas","identificacion":"CC 62581605","correo":"monica.lucia@correo.com","celular":"3163805643","direccion":"Calle 14 #54-79, Manizales"},"responsable":"Rodrigo Esteban Muñoz","area":"Canales Digitales","prioridad":"Normal","estado":"Anulado","canal":"Presencial","slaHoras":24,"limiteSLA":"2026-05-07T23:00:00","tipoCausa":"Retención de dinero sin entrega","descripcion":"Caso relacionado con retención de dinero sin entrega en el servicio de Canales Digitales.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-06T18:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-03880","fechaRadicado":"2026-05-06T13:00:00","tipo":"Queja","servicio":"Seguros y Protección","categoria":"Seguro de Desempleo","subcategoria":"Rechazo de reclamación","asociado":{"nombre":"Diana Marcela Ríos Castillo","identificacion":"CC 27933473","correo":"diana.marcela@correo.com","celular":"3106074507","direccion":"Calle 32 #29-1, Armenia"},"responsable":"Jorge Iván Castillo","area":"Seguros y Protección","prioridad":"Alta","estado":"Radicado","canal":"Portal Web","slaHoras":72,"limiteSLA":"2026-05-09T18:00:00","tipoCausa":"Rechazo de reclamación","descripcion":"Caso relacionado con rechazo de reclamación en el servicio de Seguros y Protección.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-06T13:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-03377","fechaRadicado":"2026-05-02T13:00:00","tipo":"Reclamo","servicio":"Canales Digitales","categoria":"App Móvil","subcategoria":"Cierre inesperado de la app","asociado":{"nombre":"Diana Marcela Ríos Castillo","identificacion":"CC 20503872","correo":"diana.marcela@correo.com","celular":"3112880302","direccion":"Calle 50 #1-45, Manizales"},"responsable":"Carlos Andrés Moreno","area":"Canales Digitales","prioridad":"Baja","estado":"Anulado","canal":"Portal Web","slaHoras":4,"limiteSLA":"2026-05-02T22:00:00","tipoCausa":"Cierre inesperado de la app","descripcion":"Caso relacionado con cierre inesperado de la app en el servicio de Canales Digitales.","semaforo":"En tiempo","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T13:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-04696","fechaRadicado":"2026-05-07T08:00:00","tipo":"Queja","servicio":"Cartera y Cobranza","categoria":"Reestructuración de Crédito","subcategoria":"Demora en proceso de reestructuración","asociado":{"nombre":"Sandra Milena Aguirre Toro","identificacion":"CC 63618602","correo":"sandra.milena@correo.com","celular":"3123587523","direccion":"Calle 45 #10-42, Pereira"},"responsable":"Patricia Inés Agudelo","area":"Cartera y Cobranza","prioridad":"Normal","estado":"Cerrado","canal":"Presencial","slaHoras":24,"limiteSLA":"2026-05-08T13:00:00","tipoCausa":"Demora en proceso de reestructuración","descripcion":"Caso relacionado con demora en proceso de reestructuración en el servicio de Cartera y Cobranza.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-07T08:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-04048","fechaRadicado":"2026-05-02T09:00:00","tipo":"Sugerencia","servicio":"Vinculación y Retiro","categoria":"Actualización de Datos","subcategoria":"Error al actualizar datos","asociado":{"nombre":"Wilson Andrés Cárdenas Ruiz","identificacion":"CC 20639113","correo":"wilson.andres@correo.com","celular":"3176251864","direccion":"Calle 74 #31-49, Barranquilla"},"responsable":"Jorge Iván Castillo","area":"Vinculación y Retiro","prioridad":"Normal","estado":"Anulado","canal":"Chat Web","slaHoras":120,"limiteSLA":"2026-05-07T14:00:00","tipoCausa":"Error al actualizar datos","descripcion":"Caso relacionado con error al actualizar datos en el servicio de Vinculación y Retiro.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-02T09:00:00","accion":"Caso radicado","usuario":"Chat Web","detalle":"Canal: Chat Web"}]},
+    {"id":"FPQRS-2026-04547","fechaRadicado":"2026-05-04T12:00:00","tipo":"Reclamo","servicio":"Pagos y Transferencias","categoria":"Transferencias Nacionales","subcategoria":"Comprobante de transferencia no recibido","asociado":{"nombre":"Yolanda Cecilia Prada Ríos","identificacion":"CC 41018525","correo":"yolanda.cecilia@correo.com","celular":"3105039571","direccion":"Calle 63 #75-1, Armenia"},"responsable":"Rodrigo Esteban Muñoz","area":"Pagos y Transferencias","prioridad":"Critica","estado":"Radicado","canal":"Presencial","slaHoras":72,"limiteSLA":"2026-05-07T17:00:00","tipoCausa":"Comprobante de transferencia no recibido","descripcion":"Caso relacionado con comprobante de transferencia no recibido en el servicio de Pagos y Transferencias.","semaforo":"Próximo a vencer","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-04T12:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-03147","fechaRadicado":"2026-05-05T11:00:00","tipo":"Reclamo","servicio":"Certificaciones y Documentos","categoria":"Certificado de Saldo","subcategoria":"Certificado con error","asociado":{"nombre":"Yolanda Cecilia Prada Ríos","identificacion":"CC 73628389","correo":"yolanda.cecilia@correo.com","celular":"3134728617","direccion":"Calle 32 #19-30, Pereira"},"responsable":"Camilo Ernesto Herrera","area":"Certificaciones y Documentos","prioridad":"Alta","estado":"Cerrado","canal":"Presencial","slaHoras":24,"limiteSLA":"2026-05-06T16:00:00","tipoCausa":"Certificado con error","descripcion":"Caso relacionado con certificado con error en el servicio de Certificaciones y Documentos.","semaforo":"Cerrado","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-05T11:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]},
+    {"id":"FPQRS-2026-03179","fechaRadicado":"2026-05-07T11:00:00","tipo":"Reclamo","servicio":"Inversiones","categoria":"Portafolio de Acciones","subcategoria":"Orden no ejecutada","asociado":{"nombre":"Sandra Milena Aguirre Toro","identificacion":"CC 47105211","correo":"sandra.milena@correo.com","celular":"3160562108","direccion":"Calle 23 #88-48, Bucaramanga"},"responsable":"Rodrigo Esteban Muñoz","area":"Inversiones","prioridad":"Alta","estado":"En Gestión","canal":"Portal Web","slaHoras":4,"limiteSLA":"2026-05-07T20:00:00","tipoCausa":"Orden no ejecutada","descripcion":"Caso relacionado con orden no ejecutada en el servicio de Inversiones.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-07T11:00:00","accion":"Caso radicado","usuario":"Portal Web","detalle":"Canal: Portal Web"}]},
+    {"id":"FPQRS-2026-04453","fechaRadicado":"2026-05-06T12:00:00","tipo":"Petición","servicio":"Atención al Asociado","categoria":"Atención Virtual","subcategoria":"Chat sin respuesta","asociado":{"nombre":"Natalia Andrea Cuartas Pérez","identificacion":"CC 78817680","correo":"natalia.andrea@correo.com","celular":"3143915277","direccion":"Calle 75 #7-36, Bogotá"},"responsable":"Camilo Ernesto Herrera","area":"Atención al Asociado","prioridad":"Baja","estado":"Radicado","canal":"Presencial","slaHoras":120,"limiteSLA":"2026-05-11T17:00:00","tipoCausa":"Chat sin respuesta","descripcion":"Caso relacionado con chat sin respuesta en el servicio de Atención al Asociado.","semaforo":"Vencido","comentarios":[],"adjuntos":[],"historial":[{"fecha":"2026-05-06T12:00:00","accion":"Caso radicado","usuario":"Presencial","detalle":"Canal: Presencial"}]}
+  ],
+
+  responsables: [
+    "Valentina Ospina Ríos", "Jorge Iván Castillo", "Iván Darío Zapata",
+    "Patricia Inés Agudelo", "Camilo Ernesto Herrera", "Diana Carolina Ríos",
+    "Adriana Milena Cortés", "Carlos Andrés Moreno", "Marcela Suárez Peña",
+    "Rodrigo Esteban Muñoz"
+  ],
+  usuarios: [
+    { id: 1, nombre: "Sofía Martínez",    correo: "admin@coopfinanzas.com.co",      password: "Admin@2026!", rol: "Administrador", avatar: "SM" },
+    { id: 2, nombre: "Carlos Operador",   correo: "operador@coopfinanzas.com.co",   password: "Oper@2026!",  rol: "Operador",       avatar: "CO" },
+    { id: 3, nombre: "Laura Supervisora", correo: "supervisor@coopfinanzas.com.co", password: "Super@2026!", rol: "Supervisor",     avatar: "LS" }
+  ],
+  loaded: false,
+
+  /* Datos de servicios embebidos — disponibles aunque falle la carga del JSON */
+  servicios: {
+    "Crédito":                    ["Crédito de Consumo", "Crédito de Vivienda", "Crédito Empresarial", "Refinanciación de Crédito", "Libranza"],
+    "Ahorro y Captación":         ["Cuenta de Ahorro", "CDT", "Cuenta Corriente", "Ahorro Programado"],
+    "Canales Digitales":          ["App Móvil", "Portal Web", "Banca en Línea", "Cajeros Automáticos"],
+    "Atención al Asociado":       ["Atención Presencial", "Atención Virtual", "Call Center", "Asesoría Financiera"],
+    "Pagos y Transferencias":     ["Transferencias Nacionales", "Pago PSE", "Pagos de Servicios", "Transferencias Internacionales"],
+    "Seguros y Protección":       ["Seguro de Vida", "Seguro de Desempleo", "SOAT", "Seguro de Hogar"],
+    "Inversiones":                ["Fondos de Inversión", "Portafolio de Acciones", "Planes de Pensión"],
+    "Centrales de Riesgo":        ["Reporte en DataCrédito", "Reporte en TransUnión", "Levantamiento de Reporte"],
+    "Educación Cooperativa":      ["Cursos Financieros", "Talleres de Ahorro", "Asesoría Cooperativa"],
+    "Vinculación y Retiro":       ["Apertura de Cuenta", "Actualización de Datos", "Retiro de Asociado"],
+    "Cartera y Cobranza":         ["Reestructuración de Crédito", "Refinanciación de Deuda", "Cobro Prejurídico"],
+    "Certificaciones y Documentos": ["Certificado de Saldo", "Paz y Salvo", "Extracto de Cuenta", "Carta de Deuda"]
+  },
+
+  subcategorias: {
+    /* Crédito */
+    "Crédito de Consumo":           ["Solicitud de refinanciación", "Tasa de interés incorrecta", "Error en cuota", "Cobro no autorizado"],
+    "Crédito de Vivienda":          ["Error en cuota hipotecaria", "Solicitud de refinanciación vivienda", "Cobro de seguro no autorizado", "Cambio de tasa no informado"],
+    "Crédito Empresarial":          ["Demora en desembolso", "Condiciones no acordadas", "Error en amortización", "Solicitud de ampliación de plazo"],
+    "Refinanciación de Crédito":    ["Inconformidad con condiciones de refinanciación", "Tasa no acordada", "Demora en aprobación"],
+    "Libranza":                     ["Descuento incorrecto en nómina", "No autorización de libranza", "Error en saldo de libranza", "Solicitud de paz y salvo"],
+    /* Ahorro y Captación */
+    "Cuenta de Ahorro":             ["Saldo incorrecto en cuenta", "Cobro de cuota manejo", "Bloqueo de cuenta", "Error en transacción"],
+    "CDT":                          ["Error en tasa de CDT", "Renovación automática no autorizada", "Retiro anticipado negado", "Certificado no entregado"],
+    "Cuenta Corriente":             ["Cobro de chequera no autorizado", "Sobregiro no autorizado", "Error en extracto", "Bloqueo de cuenta corriente"],
+    "Ahorro Programado":            ["Débito automático incorrecto", "Meta de ahorro no aplicada", "Cancelación anticipada negada", "Error en rendimientos"],
+    /* Canales Digitales */
+    "App Móvil":                    ["Sugerencia de nueva funcionalidad en app", "Error al iniciar sesión", "Transacción duplicada", "App no carga"],
+    "Portal Web":                   ["Sugerencia de mejora en portal web", "Error al pagar en línea", "Contraseña no restablece", "Error al descargar extracto"],
+    "Banca en Línea":               ["Acceso bloqueado a banca en línea", "Token no llega al celular", "Error en transferencia en línea", "Sesión expira constantemente"],
+    "Cajeros Automáticos":          ["Cajero retuvo la tarjeta", "Retiro no dispensado pero debitado", "Cajero fuera de servicio", "Error en consulta de saldo"],
+    /* Atención al Asociado */
+    "Atención Presencial":          ["Felicitación por excelente atención", "Tiempo de espera excesivo", "Mala atención del asesor", "Información incorrecta suministrada"],
+    "Atención Virtual":             ["Chat sin respuesta oportuna", "Asesor no resolvió duda", "Tiempo de espera en línea", "Videollamada con fallas técnicas"],
+    "Call Center":                  ["Llamada no contestada", "Tiempo de espera excesivo en llamada", "Asesor no resolvió inquietud", "Información equivocada por teléfono"],
+    "Asesoría Financiera":          ["Asesoría no recibida", "Información del producto incorrecta", "Solicitud de nueva asesoría", "Asesor no disponible"],
+    /* Pagos y Transferencias */
+    "Transferencias Nacionales":    ["Comprobante de transferencia", "Transferencia no acreditada", "Monto incorrecto transferido", "Transferencia enviada a cuenta errónea"],
+    "Pago PSE":                     ["Pago PSE no acreditado en destino", "Cobro doble por PSE", "Error en referencia de pago", "Pago PSE revertido sin aviso"],
+    "Pagos de Servicios":           ["Pago de servicio no aplicado", "Cobro doble de servicio público", "Error en referencia de pago de servicio", "Recibo de pago no generado"],
+    "Transferencias Internacionales": ["Transferencia demorada más de lo acordado", "Tasa de cambio incorrecta", "Comisión no informada previamente", "Transferencia no recibida"],
+    /* Seguros y Protección */
+    "Seguro de Vida":               ["Solicitud de información de cobertura", "Prima debitada incorrectamente", "Reclamación de seguro no atendida", "Cancelación de seguro no procesada"],
+    "Seguro de Desempleo":          ["Reclamación de seguro de desempleo negada", "Demora en pago de seguro", "Requisitos no informados", "Prima cobrada sin autorización"],
+    "SOAT":                         ["SOAT no generado correctamente", "Error en datos del vehículo en SOAT", "Reclamación SOAT no atendida", "Cobro incorrecto del SOAT"],
+    "Seguro de Hogar":              ["Reclamación de seguro de hogar negada", "Cobertura no corresponde a lo ofrecido", "Prima incorrecta", "Solicitud de información de póliza"],
+    /* Inversiones */
+    "Fondos de Inversión":          ["Rendimiento no aplicado correctamente", "Retiro de fondo demorado", "Información del fondo incorrecta", "Solicitud de vinculación a fondo"],
+    "Portafolio de Acciones":       ["Error en valoración de portafolio", "Compra/venta no ejecutada", "Informe de portafolio no recibido", "Solicitud de asesoría de inversión"],
+    "Planes de Pensión":            ["Aporte no registrado", "Error en proyección de pensión", "Solicitud de cambio de plan", "Información de beneficiarios incorrecta"],
+    /* Centrales de Riesgo */
+    "Reporte en DataCrédito":       ["Reporte negativo injustificado", "Solicitud de eliminación de reporte", "Información desactualizada en DataCrédito", "Reporte no corresponde a deuda"],
+    "Reporte en TransUnión":        ["Reporte negativo injustificado en TransUnión", "Solicitud de corrección de reporte", "Deuda ya pagada aparece activa", "Solicitud de historia crediticia"],
+    "Levantamiento de Reporte":     ["Demora en levantamiento de reporte", "Reporte no levantado tras pago", "Solicitud de certificado de levantamiento", "Error en fecha de levantamiento"],
+    /* Educación Cooperativa */
+    "Cursos Financieros":           ["Solicitud de inscripción a curso", "Certificado de curso no recibido", "Curso cancelado sin aviso", "Información de fechas incorrecta"],
+    "Talleres de Ahorro":           ["Solicitud de taller de ahorro", "Taller cancelado sin aviso", "Material del taller no entregado", "Horario no conveniente"],
+    "Asesoría Cooperativa":         ["Solicitud de asesoría cooperativa", "Asesor no disponible", "Información cooperativa incorrecta", "Solicitud de vinculación cooperativa"],
+    /* Vinculación y Retiro */
+    "Apertura de Cuenta":           ["Demora en apertura de cuenta", "Requisitos no informados claramente", "Error en datos de la cuenta nueva", "Solicitud de tipo de cuenta diferente"],
+    "Actualización de Datos":       ["Datos no actualizados tras solicitud", "Error en datos actualizados", "Solicitud de cambio de correo o celular", "Dirección actualizada incorrectamente"],
+    "Retiro de Asociado":           ["Demora en proceso de retiro", "Saldo final incorrecto", "Solicitud de certificado de retiro", "Cobros adicionales no informados"],
+    /* Cartera y Cobranza */
+    "Reestructuración de Crédito":  ["Demora en proceso de reestructuración", "Condiciones no acordadas", "Error en nuevo plan de pagos", "Reestructuración no aprobada sin justificación"],
+    "Refinanciación de Deuda":      ["Condiciones de refinanciación no acordadas", "Tasa de refinanciación incorrecta", "Demora en aprobación", "Cuota refinanciada incorrecta"],
+    "Cobro Prejurídico":            ["Cobro de honorarios no informado", "Deuda ya pagada en cobro", "Comunicación de cobro agresiva", "Solicitud de acuerdo de pago"],
+    /* Certificaciones y Documentos */
+    "Certificado de Saldo":         ["Certificado no entregado a tiempo", "Error en saldo del certificado", "Solicitud urgente de certificado", "Certificado con datos incorrectos"],
+    "Paz y Salvo":                  ["Paz y salvo no entregado tras pago total", "Error en fecha del paz y salvo", "Solicitud de paz y salvo urgente", "Paz y salvo con datos incorrectos"],
+    "Extracto de Cuenta":           ["Extracto con movimientos incorrectos", "Extracto no recibido por correo", "Solicitud de extracto histórico", "Error en saldo del extracto"],
+    "Carta de Deuda":               ["Carta con monto incorrecto", "Carta de deuda no recibida", "Solicitud urgente de carta de deuda", "Error en datos del deudor en carta"]
+  },
+
+  /* Catálogo de servicios para el módulo de Parametrización */
+  serviciosCatalogo: [
+    { nombre: "Crédito",                      descripcion: "Productos de financiamiento para asociados: consumo, vivienda, empresarial", estado: "Activo" },
+    { nombre: "Ahorro y Captación",            descripcion: "Cuentas de ahorro, CDT y depósitos a término",                                estado: "Activo" },
+    { nombre: "Canales Digitales",             descripcion: "App móvil, portal web, banca virtual y cajeros",                              estado: "Activo" },
+    { nombre: "Atención al Asociado",          descripcion: "Servicio presencial, telefónico y virtual en oficinas",                       estado: "Activo" },
+    { nombre: "Pagos y Transferencias",        descripcion: "PSE, pagos de servicios públicos y transferencias interbancarias",             estado: "Activo" },
+    { nombre: "Seguros y Protección",          descripcion: "Seguros de vida, hogar, desempleo y protección financiera",                    estado: "Activo" },
+    { nombre: "Inversiones",                   descripcion: "Portafolios de inversión, fondos y rentabilidades",                            estado: "Activo" },
+    { nombre: "Centrales de Riesgo",           descripcion: "Reporte, corrección y consulta en centrales de riesgo",                        estado: "Activo" },
+    { nombre: "Educación Cooperativa",         descripcion: "Programas de educación financiera y cooperativa para asociados",               estado: "Activo" },
+    { nombre: "Vinculación y Retiro",          descripcion: "Procesos de ingreso, actualización de datos y retiro de asociados",            estado: "Activo" },
+    { nombre: "Cartera y Cobranza",            descripcion: "Gestión de mora, acuerdos de pago y reestructuración",                         estado: "Activo" },
+    { nombre: "Certificaciones y Documentos",  descripcion: "Emisión de certificados tributarios, extractos y constancias",                 estado: "Activo" }
+  ],
+
+  /**
+   * Carga asíncrona del JSON de datos.
+   * Retorna una Promise que SIEMPRE resuelve (incluso si falla el fetch),
+   * para que .then() funcione aunque el archivo no sea accesible via file://.
+   */
+  load: function() {
+    var base = FPQRS.utils.getBasePath();
+    var deferred = $.Deferred();
+
+    $.getJSON(base + 'data/cases.json')
+      .done(function(json) {
+        if (json.casos)        FPQRS.data.casos        = json.casos;
+        if (json.usuarios)     FPQRS.data.usuarios     = json.usuarios;
+        if (json.responsables) FPQRS.data.responsables = json.responsables;
+        if (json.estadisticas) FPQRS.data.estadisticas = json.estadisticas;
+        /* Los servicios del JSON sobreescriben los embebidos si están presentes */
+        if (json.servicios)      FPQRS.data.servicios      = json.servicios;
+        if (json.subcategorias)  FPQRS.data.subcategorias  = json.subcategorias;
+        FPQRS.data.loaded = true;
+        deferred.resolve();
+      })
+      .fail(function() {
+        console.warn('FPQRS: No se pudo cargar cases.json (posiblemente file://). Usando datos embebidos.');
+        FPQRS.data.loaded = true;
+        deferred.resolve();
+      });
+
+    return deferred.promise();
+  },
+
+  /**
+   * Obtiene un caso por su ID
+   */
+  getCasoById: function(id) {
+    return FPQRS.data.casos.find(function(c) { return c.id === id; }) || null;
+  },
+
+  /**
+   * Busca casos con filtros opcionales
+   * @param {object} filtros - { texto, tipo, estado, semaforo }
+   */
+  buscarCasos: function(filtros) {
+    filtros = filtros || {};
+    return FPQRS.data.casos.filter(function(c) {
+      // Filtro de texto: busca en radicado, asociado, servicio, categoría
+      if (filtros.texto) {
+        var txt = filtros.texto.toLowerCase();
+        var haystack = [c.id, c.asociado.nombre, c.servicio, c.categoria, c.subcategoria]
+          .join(' ').toLowerCase();
+        if (haystack.indexOf(txt) === -1) return false;
+      }
+      if (filtros.tipo    && c.tipo    !== filtros.tipo)    return false;
+      if (filtros.estado  && c.estado  !== filtros.estado)  return false;
+      if (filtros.semaforo && c.semaforo !== filtros.semaforo) return false;
+      if (filtros.servicio && c.servicio !== filtros.servicio) return false;
+      return true;
+    });
+  }
+};
+
+/* ============================================================
+   2. UTILIDADES GENERALES
+============================================================ */
+FPQRS.utils = {
+
+  /**
+   * Devuelve la ruta base relativa al directorio raíz del proyecto
+   * según en qué carpeta esté la página HTML actual
+   */
+  getBasePath: function() {
+    var path = window.location.pathname;
+    // Si estamos en la raíz o en un .html en la raíz → no hay prefijo
+    return './';
+  },
+
+  /**
+   * Formatea una fecha ISO a DD/MM/YYYY HH:MM
+   */
+  formatDate: function(isoStr, includeTime) {
+    if (!isoStr) return '—';
+    var d = new Date(isoStr);
+    if (isNaN(d)) return isoStr;
+    var pad = function(n) { return n < 10 ? '0' + n : n; };
+    var fecha = pad(d.getDate()) + '/' + pad(d.getMonth()+1) + '/' + d.getFullYear();
+    if (includeTime) {
+      fecha += ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+    }
+    return fecha;
+  },
+
+  /**
+   * Formatea una fecha ISO a formato solo fecha DD/MM/YYYY
+   */
+  formatDateShort: function(isoStr) {
+    return FPQRS.utils.formatDate(isoStr, false);
+  },
+
+  /**
+   * Genera un ID de radicado único simulado
+   * Ejemplo: FPQRS-2026-05001
+   */
+  generarRadicado: function() {
+    var year = new Date().getFullYear();
+    var num  = String(Math.floor(Math.random() * 90000) + 10000);
+    return 'FPQRS-' + year + '-' + num;
+  },
+
+  /**
+   * Genera la clase CSS para el badge de tipo
+   */
+  badgeTipo: function(tipo) {
+    var mapa = {
+      'Felicitación': 'badge-felicitacion',
+      'Peticion':     'badge-peticion',
+      'Petición':     'badge-peticion',
+      'Queja':        'badge-queja',
+      'Reclamo':      'badge-reclamo',
+      'Sugerencia':   'badge-sugerencia'
+    };
+    return mapa[tipo] || 'bg-secondary text-white';
+  },
+
+  /**
+   * Genera la clase CSS para el badge de estado
+   */
+  badgeEstado: function(estado) {
+    var mapa = {
+      'Radicado':              'estado-radicado',
+      'En Gestión':            'estado-en-gestion',
+      'Pendiente de Información': 'estado-pendiente',
+      'Cerrado':               'estado-cerrado',
+      'Anulado':               'estado-anulado'
+    };
+    return mapa[estado] || 'bg-secondary text-white';
+  },
+
+  /**
+   * Genera la clase CSS para el semáforo
+   */
+  claseSemaforo: function(semaforo) {
+    var mapa = {
+      'Vencido':          'semaforo-vencido',
+      'Próximo a vencer': 'semaforo-proximo',
+      'En tiempo':        'semaforo-en-tiempo',
+      'Cerrado':          'semaforo-cerrado'
+    };
+    return mapa[semaforo] || 'semaforo-en-tiempo';
+  },
+
+  /**
+   * Genera la clase CSS para la prioridad
+   */
+  clasePrioridad: function(prioridad) {
+    var mapa = {
+      'Critica':  'prioridad-critica',
+      'Crítica':  'prioridad-critica',
+      'Alta':     'prioridad-alta',
+      'Normal':   'prioridad-normal',
+      'Baja':     'prioridad-baja'
+    };
+    return mapa[prioridad] || 'bg-secondary text-white';
+  },
+
+  /**
+   * Muestra un toast de notificación
+   * @param {string} mensaje - Texto del toast
+   * @param {string} tipo    - 'success' | 'error' | 'warning' | 'info'
+   * @param {number} duracion - Milisegundos (default 3500)
+   */
+  toast: function(mensaje, tipo, duracion) {
+    tipo     = tipo     || 'success';
+    duracion = duracion || 3500;
+
+    var iconos = {
+      success: '✓',
+      error:   '✗',
+      warning: '⚠',
+      info:    'ℹ'
+    };
+
+    // Eliminar toasts previos
+    $('.toast-fpqrs').remove();
+
+    var $toast = $('<div class="toast-fpqrs toast-' + tipo + '"></div>');
+    $('<span class="toast-icon"></span>').text(iconos[tipo] || '●').appendTo($toast);
+    $('<span></span>').text(mensaje).appendTo($toast);
+
+    $('body').append($toast);
+
+    setTimeout(function() {
+      $toast.fadeOut(300, function() { $(this).remove(); });
+    }, duracion);
+  },
+
+  /**
+   * Muestra u oculta un overlay de carga
+   */
+  showLoading: function() {
+    if (!$('#loadingOverlay').length) {
+      $('body').append(
+        '<div id="loadingOverlay" class="loading-overlay">' +
+        '<div class="text-center">' +
+        '<div class="spinner-border text-primary mb-2" role="status"></div>' +
+        '<div class="text-muted small">Cargando...</div>' +
+        '</div></div>'
+      );
+    }
+  },
+
+  hideLoading: function() {
+    $('#loadingOverlay').fadeOut(200, function() { $(this).remove(); });
+  },
+
+  /**
+   * Guarda datos en localStorage con prefijo FPQRS_
+   */
+  storage: {
+    set: function(key, value) {
+      try { localStorage.setItem('FPQRS_' + key, JSON.stringify(value)); } catch(e) {}
+    },
+    get: function(key) {
+      try {
+        var v = localStorage.getItem('FPQRS_' + key);
+        return v ? JSON.parse(v) : null;
+      } catch(e) { return null; }
+    },
+    remove: function(key) {
+      try { localStorage.removeItem('FPQRS_' + key); } catch(e) {}
+    }
+  }
+};
+
+/* ============================================================
+   3. MÓDULO DE SIDEBAR (comportamiento del menú lateral)
+============================================================ */
+FPQRS.sidebar = {
+
+  init: function() {
+    // Toggle del sidebar en móvil
+    $(document).on('click', '.sidebar-toggle', function() {
+      FPQRS.sidebar.open();
+    });
+
+    // Cerrar con overlay
+    $(document).on('click', '.sidebar-overlay', function() {
+      FPQRS.sidebar.close();
+    });
+
+    // Cerrar con tecla Escape
+    $(document).on('keydown', function(e) {
+      if (e.key === 'Escape') FPQRS.sidebar.close();
+    });
+
+    // Colapsar/expandir sidebar en escritorio
+    $(document).on('click', '.sidebar-collapse-btn', function() {
+      FPQRS.sidebar.toggleCollapse();
+    });
+    if (FPQRS.utils.storage.get('sidebarCollapsed')) {
+      FPQRS.sidebar.setCollapsed(true);
+    }
+
+    // Notificaciones (simulado)
+    $(document).on('click', '.sidebar-notif-btn', function() {
+      FPQRS.utils.toast('No tiene notificaciones nuevas.', 'info', 2000);
+    });
+
+    // Marcar el link activo según la página actual
+    FPQRS.sidebar.markActive();
+  },
+
+  open: function() {
+    $('.sidebar').addClass('sidebar-open');
+    $('.sidebar-overlay').addClass('visible');
+    $('body').css('overflow', 'hidden');
+  },
+
+  close: function() {
+    $('.sidebar').removeClass('sidebar-open');
+    $('.sidebar-overlay').removeClass('visible');
+    $('body').css('overflow', '');
+  },
+
+  toggleCollapse: function() {
+    var colapsado = !$('.sidebar').hasClass('collapsed');
+    FPQRS.sidebar.setCollapsed(colapsado);
+    FPQRS.utils.storage.set('sidebarCollapsed', colapsado);
+  },
+
+  setCollapsed: function(colapsado) {
+    $('.sidebar').toggleClass('collapsed', colapsado);
+    $('.app-wrapper').toggleClass('sidebar-collapsed', colapsado);
+  },
+
+  /**
+   * Marca como activo el enlace del sidebar que corresponde a la página actual
+   */
+  markActive: function() {
+    var currentPage = window.location.pathname.split('/').pop() || 'index.html';
+    $('.sidebar-nav .nav-link').each(function() {
+      var href = $(this).attr('href') || '';
+      var hrefFile = href.split('/').pop();
+      if (hrefFile === currentPage) {
+        $(this).addClass('active');
+      }
+    });
+  }
+};
+
+/* ============================================================
+   4. MÓDULO DE AUTENTICACIÓN (verificación de sesión)
+============================================================ */
+FPQRS.auth = {
+
+  /**
+   * Verifica si hay sesión activa.
+   * Si no la hay, redirige al login.
+   */
+  requireAuth: function() {
+    var session = FPQRS.utils.storage.get('session');
+    if (!session || !session.correo) {
+      window.location.href = FPQRS.utils.getBasePath() + 'login.html';
+      return false;
+    }
+    return true;
+  },
+
+  /**
+   * Devuelve el usuario de sesión actual o null
+   */
+  getSession: function() {
+    return FPQRS.utils.storage.get('session');
+  },
+
+  /**
+   * Cierra sesión y redirige al login
+   */
+  logout: function() {
+    FPQRS.utils.storage.remove('session');
+    window.location.href = FPQRS.utils.getBasePath() + 'login.html';
+  },
+
+  /**
+   * Rellena el nombre de usuario en el topbar si existe
+   */
+  fillUserUI: function() {
+    var session = FPQRS.auth.getSession();
+    if (!session) return;
+
+    // Topbar: nombre y avatar
+    $('.topbar-user-name').text(session.nombre || session.correo);
+    $('.topbar-user-avatar, .sidebar-user .avatar').text(session.avatar || 'U');
+    $('.sidebar-user .name').text(session.nombre || session.correo);
+    $('.sidebar-user .role').text(session.rol || '');
+  }
+};
+
+/* ============================================================
+   5. INICIALIZACIÓN AL CARGAR EL DOM
+============================================================ */
+$(function() {
+
+  // Inicializar sidebar
+  FPQRS.sidebar.init();
+
+  // Cargar datos si el JSON está disponible (páginas de bandeja/detalle)
+  // Cada módulo específico llamará FPQRS.data.load() en su propio archivo
+
+  // Botón de logout (sidebar y cualquier otro lugar)
+  $(document).on('click', '.btn-logout, .sidebar-logout', function(e) {
+    e.preventDefault();
+    FPQRS.auth.logout();
+  });
+
+  // Rellenar UI del usuario si hay sesión
+  FPQRS.auth.fillUserUI();
+
+  // Tooltips de Bootstrap (si hay elementos con data-bs-toggle="tooltip")
+  $('[data-bs-toggle="tooltip"]').each(function() {
+    new bootstrap.Tooltip(this);
+  });
+
+  // Animación de entrada suave para el contenido principal
+  $('.page-content').addClass('animate__fadeIn');
+
+  console.log('✅ GestorFPQRS v1.0 — main.js cargado correctamente');
+});

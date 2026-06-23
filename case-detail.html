@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Detalle del Caso FPQRS — GestorFPQRS">
+  <title>Detalle de Caso — GestorFPQRS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    crossorigin="anonymous">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<div class="app-wrapper">
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━
+       SIDEBAR (idéntico al inbox)
+  ━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <aside class="sidebar" id="sidebar" aria-label="Menú de navegación">
+    <div class="sidebar-brand">
+      <div class="brand-icon"><img src="assets/images/app-logo.png" alt="Logo"></div>
+      <span class="brand-name">GestorFPQRS</span>
+    </div>
+
+    <button class="sidebar-collapse-btn" aria-label="Colapsar menú">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <div class="sidebar-section-label">Operación</div>
+    <nav class="sidebar-nav">
+      <a href="inbox.html"    class="nav-link"><i class="bi bi-inbox"></i><span>Bandeja de Casos</span><span class="badge-count">5</span></a>
+      <a href="case-detail.html" class="nav-link active"><i class="bi bi-file-text"></i><span>Detalle de Caso</span></a>
+      <a href="fpqrs-form.html"  class="nav-link"><i class="bi bi-plus-circle"></i><span>Registrar FPQRS</span></a>
+      <a href="#" class="nav-link"><i class="bi bi-person-workspace"></i><span>Crear Caso (Operador)</span></a>
+      <a href="#" class="nav-link"><i class="bi bi-bar-chart"></i><span>Métricas</span></a>
+      <a href="#" class="nav-link"><i class="bi bi-graph-up"></i><span>Analítica</span></a>
+      <a href="#" class="nav-link"><i class="bi bi-download"></i><span>Exportar Casos</span></a>
+    </nav>
+
+    <div class="sidebar-section-label">Administración</div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-link"><i class="bi bi-clock-history"></i><span>Auditoría</span></a>
+      <a href="parametrizacion.html" class="nav-link"><i class="bi bi-sliders"></i><span>Parametrización</span></a>
+      <a href="#" class="nav-link"><i class="bi bi-toggles"></i><span>Parámetros Alt.</span></a>
+      <a href="#" class="nav-link"><i class="bi bi-diagram-3"></i><span>Modelo Cat. Resp.</span></a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="sidebar-notif-btn" aria-label="Notificaciones">
+        <i class="bi bi-bell"></i><span>Notificaciones</span>
+      </button>
+      <div class="sidebar-user">
+        <div class="avatar topbar-user-avatar">SM</div>
+        <div class="user-info">
+          <div class="name topbar-user-name">Sofía Martínez</div>
+          <div class="role">Administrador</div>
+        </div>
+      </div>
+      <a href="login.html" class="sidebar-logout btn-logout">
+        <i class="bi bi-box-arrow-left"></i><span>Cerrar sesión</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━
+       CONTENIDO PRINCIPAL
+  ━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="main-content">
+
+    <button class="mobile-menu-btn sidebar-toggle" aria-label="Abrir menú" aria-controls="sidebar">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <main class="page-content" id="mainContent">
+
+      <!-- Breadcrumb -->
+      <nav class="breadcrumb-fpqrs mb-3" aria-label="Ruta de navegación">
+        <a href="inbox.html"><i class="bi bi-chevron-left me-1"></i>Bandeja de Casos</a>
+        <span class="sep">/</span>
+        <span class="current" id="breadcrumbId">FPQRS-2026-04779</span>
+      </nav>
+
+      <!-- — Cabecera del caso — -->
+      <div class="case-detail-header mb-3" id="caseHeader">
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
+          <div>
+            <div class="case-id" id="caseId">FPQRS-2026-04779</div>
+            <div class="case-meta d-flex flex-wrap gap-2 mt-1" id="caseMeta">
+              <!-- badges dinámicos -->
+            </div>
+            <div class="case-meta mt-1" id="caseFechaCanal">
+              Radicado el — · Canal: —
+            </div>
+          </div>
+          <div class="header-actions d-flex gap-2 flex-wrap">
+            <button class="btn btn-outline-primary btn-sm" id="btnReasignar"
+              data-bs-toggle="modal" data-bs-target="#modalReasignar">
+              <i class="bi bi-person-arrows me-1"></i>Reasignar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- — Alerta SLA vencido (condicional) — -->
+      <div class="alert-sla-vencido d-none mb-3" id="alertaSLA" role="alert">
+        <div class="d-flex align-items-start gap-2">
+          <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+          <div>
+            <strong>SLA vencido — Atención urgente requerida</strong>
+            <p class="mb-0 mt-1 small" id="alertaSLAMsg"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══════════════════════════════════════════
+           COLUMNAS: IZQUIERDA (info + tabs) | DERECHA (acciones)
+      ══════════════════════════════════════════ -->
+      <div class="row g-3 case-detail-cols">
+
+        <!-- ── Columna izquierda ── -->
+        <div class="col-12 col-lg-8 col-left">
+
+          <!-- Datos del Asociado -->
+          <div class="info-card">
+            <h6><i class="bi bi-person me-2"></i>Datos del Asociado</h6>
+            <div class="row g-0">
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Nombre</div>
+                  <div class="field-value" id="asocNombre">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Identificación</div>
+                  <div class="field-value" id="asocId">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Correo</div>
+                  <div class="field-value" id="asocCorreo">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Celular</div>
+                  <div class="field-value" id="asocCelular">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Dirección</div>
+                  <div class="field-value" id="asocDireccion">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Datos del Caso -->
+          <div class="info-card">
+            <h6><i class="bi bi-briefcase me-2"></i>Datos del Caso</h6>
+            <div class="row g-0">
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Servicio</div>
+                  <div class="field-value" id="casoServicio">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Categoría</div>
+                  <div class="field-value" id="casoCate">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Subcategoría</div>
+                  <div class="field-value" id="casoSubcate">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Responsable</div>
+                  <div class="field-value" id="casoResponsable">—</div>
+                  <div class="field-sub" id="casoArea">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Prioridad</div>
+                  <div class="field-value" id="casoPrioridad">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">SLA aplicado</div>
+                  <div class="field-value" id="casoSLA">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Fecha límite SLA</div>
+                  <div class="field-value field-value-danger" id="casoLimiteSLA">—</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-4">
+                <div class="info-field">
+                  <div class="field-label">Tipo de causa</div>
+                  <div class="field-value" id="casoTipoCausa">—</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabs: Descripción | Comentarios | Adjuntos | Historial | Respuestas -->
+          <div class="info-card p-0 overflow-hidden case-tabs">
+            <nav>
+              <ul class="nav nav-tabs px-3 pt-2" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="tab-desc" data-bs-toggle="tab"
+                    data-bs-target="#tabDesc" type="button" role="tab" aria-selected="true">
+                    Descripción
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-coments" data-bs-toggle="tab"
+                    data-bs-target="#tabComents" type="button" role="tab" aria-selected="false">
+                    Comentarios
+                    <span class="tab-count" id="countComents">0</span>
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-adjuntos" data-bs-toggle="tab"
+                    data-bs-target="#tabAdjuntos" type="button" role="tab" aria-selected="false">
+                    Adjuntos
+                    <span class="tab-count" id="countAdjuntos">0</span>
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-hist" data-bs-toggle="tab"
+                    data-bs-target="#tabHist" type="button" role="tab" aria-selected="false">
+                    Historial
+                    <span class="tab-count" id="countHistorial">0</span>
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="tab-resp" data-bs-toggle="tab"
+                    data-bs-target="#tabResp" type="button" role="tab" aria-selected="false">
+                    Respuestas
+                  </button>
+                </li>
+              </ul>
+            </nav>
+
+            <div class="tab-content">
+              <!-- Descripción -->
+              <div class="tab-pane fade show active tab-content-area" id="tabDesc" role="tabpanel">
+                <p id="casoDescripcion" class="mb-0 text-muted small">Cargando descripción...</p>
+              </div>
+
+              <!-- Comentarios -->
+              <div class="tab-pane fade tab-content-area" id="tabComents" role="tabpanel">
+                <div id="comentariosList">
+                  <div class="empty-state">
+                    <i class="bi bi-chat-dots"></i>
+                    <p>Sin comentarios registrados.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Adjuntos -->
+              <div class="tab-pane fade tab-content-area" id="tabAdjuntos" role="tabpanel">
+                <div id="adjuntosList">
+                  <div class="empty-state">
+                    <i class="bi bi-paperclip"></i>
+                    <p>Sin archivos adjuntos.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Historial -->
+              <div class="tab-pane fade tab-content-area" id="tabHist" role="tabpanel">
+                <div class="timeline" id="historialTimeline">
+                  <p class="text-muted small">Cargando historial...</p>
+                </div>
+              </div>
+
+              <!-- Respuestas -->
+              <div class="tab-pane fade tab-content-area" id="tabResp" role="tabpanel">
+                <div class="empty-state">
+                  <i class="bi bi-reply"></i>
+                  <p>Sin respuestas registradas.</p>
+                </div>
+              </div>
+
+            </div><!-- /tab-content -->
+          </div><!-- /case-tabs -->
+
+        </div><!-- /col-left -->
+
+        <!-- ── Columna derecha — Acciones ── -->
+        <div class="col-12 col-lg-4 col-right">
+
+          <!-- Estado actual -->
+          <div class="action-panel">
+            <div class="panel-label">Estado actual</div>
+            <div class="status-list">
+              <div class="status-row">
+                <span class="status-label">Estado</span>
+                <span class="status-value" id="estadoActual">—</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Prioridad</span>
+                <span class="status-value" id="prioDisplay">—</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">Responsable</span>
+                <span class="status-value" id="respDisplay">—</span>
+              </div>
+              <div class="status-row">
+                <span class="status-label">SLA</span>
+                <span class="status-value" id="slaDisplay">—</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cambiar estado -->
+          <div class="action-panel">
+            <h6><i class="bi bi-arrow-repeat me-1"></i>Cambiar estado</h6>
+            <select class="form-select form-select-sm mb-2" id="nuevoEstado"
+              aria-label="Nuevo estado del caso">
+              <option value="Radicado">Radicado</option>
+              <option value="En Gestión">En Gestión</option>
+              <option value="Pendiente de Información">Pendiente de Información</option>
+              <option value="Cerrado">Cerrado</option>
+              <option value="Anulado">Anulado</option>
+            </select>
+            <button class="btn btn-outline-primary btn-sm w-100" id="btnCambiarEstado">
+              <i class="bi bi-check2 me-1"></i>Aplicar cambio
+            </button>
+          </div>
+
+          <!-- Cambiar prioridad -->
+          <div class="action-panel theme-warning">
+            <h6><i class="bi bi-exclamation-triangle me-1"></i>Cambiar prioridad</h6>
+            <p class="panel-desc">
+              Solo se muestran las prioridades permitidas para esta categoría. El SLA se recalculará automáticamente.
+            </p>
+            <select class="form-select form-select-sm mb-2 select-display-warning" id="nuevaPrioridad"
+              aria-label="Nueva prioridad del caso">
+              <option value="Baja">Baja</option>
+              <option value="Normal">Normal</option>
+              <option value="Alta">Alta</option>
+              <option value="Critica">Crítica</option>
+            </select>
+            <button class="btn btn-outline-secondary btn-sm w-100" id="btnCambiarPrioridad">
+              <i class="bi bi-check2 me-1"></i>Cambiar prioridad
+            </button>
+          </div>
+
+          <!-- Reasignar -->
+          <div class="action-panel theme-info">
+            <h6><i class="bi bi-person-arrows me-1"></i>Reasignar caso</h6>
+            <p class="panel-desc">
+              Transfiera este caso a otro operador. El cambio quedará registrado en la trazabilidad.
+            </p>
+            <select class="form-select form-select-sm mb-2 select-display-info" id="nuevoResponsable"
+              aria-label="Nuevo responsable">
+            </select>
+            <button class="btn btn-outline-secondary btn-sm w-100" id="btnReasignarCaso">
+              <i class="bi bi-check2 me-1"></i>Reasignar
+            </button>
+          </div>
+
+          <!-- Registrar observación -->
+          <div class="action-panel">
+            <h6><i class="bi bi-chat-left-text me-1"></i>Registrar observación</h6>
+            <textarea class="form-control form-control-sm mb-2"
+              id="nuevaObservacion" rows="3"
+              placeholder="Escriba su observación interna o respuesta al asociado..."></textarea>
+            <div class="form-check mb-2">
+              <input class="form-check-input" type="checkbox" id="notificarAsociado">
+              <label class="form-check-label small" for="notificarAsociado">
+                Notificar esta respuesta al asociado
+              </label>
+            </div>
+            <button class="btn btn-primary btn-sm w-100" id="btnRegistrarObs">
+              Registrar observación
+            </button>
+          </div>
+
+          <!-- Acciones finales -->
+          <div class="action-panel">
+            <div class="panel-label">Acciones finales</div>
+            <div class="d-grid gap-2">
+              <button class="btn btn-success btn-sm" id="btnCerrarCaso">
+                <i class="bi bi-lock me-1"></i>Cerrar caso
+              </button>
+              <button class="btn btn-anular-soft btn-sm" id="btnAnularCaso">
+                <i class="bi bi-slash-circle me-1"></i>Anular caso
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /col-right -->
+
+      </div><!-- /row -->
+
+    </main>
+  </div><!-- /main-content -->
+
+</div><!-- /app-wrapper -->
+
+<!-- ═══════════════════════════════════
+     MODAL — Confirmación de reasignación
+═══════════════════════════════════ -->
+<div class="modal fade" id="modalReasignar" tabindex="-1" aria-labelledby="modalReasignarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalReasignarLabel">
+          <i class="bi bi-person-arrows me-2"></i>Reasignar caso
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p class="small text-muted mb-3">
+          Seleccione el nuevo responsable para este caso. El cambio quedará registrado en la trazabilidad.
+        </p>
+        <select class="form-select" id="nuevoResponsableModal" aria-label="Nuevo responsable modal">
+          <option value="">Seleccionar responsable...</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="btnConfirmReasignar">
+          <i class="bi bi-check2 me-1"></i>Confirmar reasignación
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+<script>
+/* ─────────────────────────────────────────────────
+   Módulo inline del detalle de caso
+   (pequeño porque toda la lógica pesada está en main.js)
+───────────────────────────────────────────────── */
+$(function() {
+  // Verificar sesión
+  if (!FPQRS.auth.requireAuth()) return;
+
+  FPQRS.utils.showLoading();
+  FPQRS.data.load().then(function() {
+    FPQRS.utils.hideLoading();
+
+    // Leer el ID de la URL: ?id=FPQRS-2026-04779
+    var params = new URLSearchParams(window.location.search);
+    var caseId = params.get('id') || 'FPQRS-2026-04779';
+
+    var caso = FPQRS.data.getCasoById(caseId);
+    if (!caso) {
+      // Si no existe, usar el primer caso
+      caso = FPQRS.data.casos[0];
+    }
+    if (!caso) {
+      $('#mainContent').html('<div class="alert alert-warning mt-3">No se encontró el caso solicitado.</div>');
+      return;
+    }
+
+    renderCaso(caso);
+    bindCaseEvents(caso);
+  });
+
+  /* ──────────── RENDER ──────────── */
+  function renderCaso(c) {
+    var utils = FPQRS.utils;
+    var prioridadActualNorm = c.prioridad === 'Critica' ? 'Crítica' : c.prioridad;
+
+    // Breadcrumb e ID
+    $('#breadcrumbId, #caseId').text(c.id);
+    document.title = c.id + ' — GestorFPQRS';
+
+    // Meta badges
+    var meta = '<span class="badge-estado ' + utils.badgeEstado(c.estado) + ' me-1">' + c.estado + '</span>' +
+               '<span class="badge-tipo badge-neutral me-1">' + c.tipo + '</span>' +
+               '<span class="semaforo ' + utils.claseSemaforo(c.semaforo) + '">' +
+                 '<span class="semaforo-dot"></span>' + c.semaforo + '</span>';
+    $('#caseMeta').html(meta);
+    $('#caseFechaCanal').text('Radicado el ' + utils.formatDate(c.fechaRadicado, true) + ' · Canal: ' + c.canal);
+
+    // Alerta SLA
+    if (c.semaforo === 'Vencido') {
+      $('#alertaSLA').removeClass('d-none');
+      $('#alertaSLAMsg').text('La fecha límite de respuesta fue ' +
+        utils.formatDate(c.limiteSLA, true) + '. Este caso requiere acción inmediata.');
+    }
+
+    // Datos del Asociado
+    $('#asocNombre').text(c.asociado.nombre);
+    $('#asocId').text(c.asociado.identificacion);
+    $('#asocCorreo').html('<a href="mailto:' + c.asociado.correo + '">' + c.asociado.correo + '</a>');
+    $('#asocCelular').text(c.asociado.celular);
+    $('#asocDireccion').text(c.asociado.direccion);
+
+    // Datos del Caso
+    $('#casoServicio').text(c.servicio);
+    $('#casoCate').text(c.categoria);
+    $('#casoSubcate').text(c.subcategoria);
+    $('#casoResponsable').text(c.responsable);
+    $('#casoArea').text(c.area);
+    $('#casoPrioridad').html('<span class="badge-prioridad ' + utils.clasePrioridad(c.prioridad) + '">' + prioridadActualNorm + '</span>');
+    $('#casoSLA').text(c.slaHoras + 'h');
+    $('#casoLimiteSLA').text(utils.formatDate(c.limiteSLA, true));
+    $('#casoTipoCausa').text(c.tipoCausa || '—');
+
+    // Descripción
+    $('#casoDescripcion').text(c.descripcion);
+
+    // Panel derecho — Estado actual (texto con color por estado/prioridad)
+    var coloresEstado = {
+      'Radicado': '#1565c0', 'En Gestión': '#e65100',
+      'Pendiente de Información': '#f9a825', 'Cerrado': 'var(--color-closed)', 'Anulado': 'var(--color-closed)'
+    };
+    var coloresPrioridad = {
+      'Crítica': 'var(--color-critica)', 'Alta': '#e65100', 'Normal': '#1565c0', 'Baja': 'var(--color-success)'
+    };
+    $('#estadoActual').text(c.estado).css('color', coloresEstado[c.estado] || '');
+    $('#prioDisplay').text(prioridadActualNorm).css('color', coloresPrioridad[prioridadActualNorm] || '');
+    $('#respDisplay').text(c.responsable).css('color', '');
+    $('#slaDisplay').text(c.slaHoras + 'h');
+
+    $('#nuevoEstado').val(c.estado);
+
+    // Select de prioridad: la opción actual muestra "Prioridad actual: X"
+    var $prio = $('#nuevaPrioridad').empty();
+    [['Baja','Baja'], ['Normal','Normal'], ['Alta','Alta'], ['Critica','Crítica']].forEach(function(p) {
+      var esActual = p[1] === prioridadActualNorm;
+      $prio.append($('<option></option>').val(p[0])
+        .text(esActual ? ('Prioridad actual: ' + p[1]) : p[1])
+        .prop('selected', esActual));
+    });
+
+    // Contador tabs
+    $('#countComents').text(c.comentarios.length);
+    $('#countAdjuntos').text(c.adjuntos.length);
+    $('#countHistorial').text(c.historial.length);
+
+    // Render comentarios
+    renderComentarios(c.comentarios);
+
+    // Render adjuntos
+    renderAdjuntos(c.adjuntos);
+
+    // Render historial
+    renderHistorial(c.historial);
+
+    // Cargar responsables en selects
+    cargarResponsables(c.responsable);
+  }
+
+  function renderComentarios(comentarios) {
+    var $list = $('#comentariosList').empty();
+    if (!comentarios || comentarios.length === 0) {
+      $list.html('<div class="empty-state"><i class="bi bi-chat-dots"></i><p>Sin comentarios registrados.</p></div>');
+      return;
+    }
+    comentarios.forEach(function(com) {
+      $list.append(
+        '<div class="comment-item">' +
+          '<div class="comment-header">' +
+            '<span class="comment-author"><i class="bi bi-person-circle me-1"></i>' + com.autor + '</span>' +
+            '<span class="comment-date">' + FPQRS.utils.formatDate(com.fecha, true) + '</span>' +
+          '</div>' +
+          '<p class="comment-text mb-0">' + com.texto + '</p>' +
+          (com.notificado ? '<div class="comment-notif"><i class="bi bi-check2 me-1"></i>Notificado al asociado</div>' : '') +
+        '</div>'
+      );
+    });
+  }
+
+  function renderAdjuntos(adjuntos) {
+    var $list = $('#adjuntosList').empty();
+    if (!adjuntos || adjuntos.length === 0) {
+      $list.html('<div class="empty-state"><i class="bi bi-paperclip"></i><p>Sin archivos adjuntos.</p></div>');
+      return;
+    }
+    adjuntos.forEach(function(adj) {
+      var ext  = adj.nombre.split('.').pop().toLowerCase();
+      var icon = ext === 'pdf' ? 'bi-file-pdf' : (ext === 'png' || ext === 'jpg' ? 'bi-file-image' : 'bi-file-earmark');
+      $list.append(
+        '<div class="attachment-item">' +
+          '<div class="attach-icon"><i class="bi ' + icon + '"></i></div>' +
+          '<div>' +
+            '<div class="attach-name">' + adj.nombre + '</div>' +
+            '<div class="attach-size">' + adj.tamaño + ' · ' + FPQRS.utils.formatDateShort(adj.fecha) + '</div>' +
+          '</div>' +
+          '<a href="#" class="ms-auto btn btn-sm btn-outline-secondary py-0 px-2" title="Descargar (simulado)">' +
+            '<i class="bi bi-download"></i>' +
+          '</a>' +
+        '</div>'
+      );
+    });
+  }
+
+  function renderHistorial(historial) {
+    var $tl = $('#historialTimeline').empty();
+    if (!historial || historial.length === 0) {
+      $tl.html('<p class="text-muted small">Sin historial.</p>');
+      return;
+    }
+    // Mostrar en orden inverso (más reciente primero)
+    historial.slice().reverse().forEach(function(h) {
+      $tl.append(
+        '<div class="timeline-item">' +
+          '<div class="time-label">' + FPQRS.utils.formatDate(h.fecha, true) + '</div>' +
+          '<div class="time-action">' + h.accion + '</div>' +
+          '<div class="time-detail">' + h.detalle + '</div>' +
+          '<div class="time-user">Por: ' + h.usuario + '</div>' +
+        '</div>'
+      );
+    });
+  }
+
+  function cargarResponsables(actual) {
+    // Select inline del panel "Reasignar caso": el responsable actual se muestra con prefijo
+    var $resp = $('#nuevoResponsable').empty();
+    FPQRS.data.responsables.forEach(function(r) {
+      var esActual = r === actual;
+      $resp.append($('<option></option>').val(r)
+        .text(esActual ? ('Responsable: ' + r) : r)
+        .prop('selected', esActual));
+    });
+
+    // Select del modal de reasignación: lista plana sin el responsable actual
+    $('#nuevoResponsableModal').find('option:not(:first)').remove();
+    FPQRS.data.responsables.forEach(function(r) {
+      if (r !== actual) {
+        $('#nuevoResponsableModal').append('<option value="' + r + '">' + r + '</option>');
+      }
+    });
+  }
+
+  /* ──────────── EVENTOS DE ACCIONES ──────────── */
+  function bindCaseEvents(caso) {
+
+    // Cambiar estado
+    $('#btnCambiarEstado').on('click', function() {
+      var nuevoEstado = $('#nuevoEstado').val();
+      if (!nuevoEstado) { FPQRS.utils.toast('Seleccione un estado.', 'warning'); return; }
+      caso.estado = nuevoEstado;
+      // Agregar al historial
+      caso.historial.push({ fecha: new Date().toISOString(), accion: 'Estado cambiado', usuario: 'Usuario actual', detalle: 'Nuevo estado: ' + nuevoEstado });
+      renderCaso(caso);
+      FPQRS.utils.toast('Estado cambiado a "' + nuevoEstado + '".', 'success');
+    });
+
+    // Cambiar prioridad
+    $('#btnCambiarPrioridad').on('click', function() {
+      var nueva = $('#nuevaPrioridad').val();
+      if (!nueva) { FPQRS.utils.toast('Seleccione una prioridad.', 'warning'); return; }
+      caso.prioridad = nueva === 'Critica' ? 'Crítica' : nueva;
+      caso.historial.push({ fecha: new Date().toISOString(), accion: 'Prioridad cambiada', usuario: 'Usuario actual', detalle: 'Nueva prioridad: ' + caso.prioridad });
+      renderCaso(caso);
+      FPQRS.utils.toast('Prioridad cambiada a "' + caso.prioridad + '".', 'success');
+    });
+
+    // Reasignar (botón en panel)
+    $('#btnReasignarCaso').on('click', function() {
+      var nuevo = $('#nuevoResponsable').val();
+      if (!nuevo) { FPQRS.utils.toast('Seleccione un responsable.', 'warning'); return; }
+      caso.historial.push({ fecha: new Date().toISOString(), accion: 'Caso reasignado', usuario: 'Usuario actual', detalle: caso.responsable + ' → ' + nuevo });
+      caso.responsable = nuevo;
+      renderCaso(caso);
+      FPQRS.utils.toast('Caso reasignado a ' + nuevo + '.', 'success');
+    });
+
+    // Reasignar (modal)
+    $('#btnConfirmReasignar').on('click', function() {
+      var nuevo = $('#nuevoResponsableModal').val();
+      if (!nuevo) { FPQRS.utils.toast('Seleccione un responsable.', 'warning'); return; }
+      caso.historial.push({ fecha: new Date().toISOString(), accion: 'Caso reasignado', usuario: 'Usuario actual', detalle: caso.responsable + ' → ' + nuevo });
+      caso.responsable = nuevo;
+      renderCaso(caso);
+      bootstrap.Modal.getInstance(document.getElementById('modalReasignar')).hide();
+      FPQRS.utils.toast('Caso reasignado a ' + nuevo + '.', 'success');
+    });
+
+    // Registrar observación
+    $('#btnRegistrarObs').on('click', function() {
+      var texto = $('#nuevaObservacion').val().trim();
+      if (!texto) { FPQRS.utils.toast('Escriba una observación antes de registrar.', 'warning'); return; }
+      var notif = $('#notificarAsociado').is(':checked');
+      var nuevoComentario = { id: Date.now(), autor: 'Usuario actual', fecha: new Date().toISOString(), texto: texto, notificado: notif };
+      caso.comentarios.push(nuevoComentario);
+      caso.historial.push({ fecha: new Date().toISOString(), accion: 'Comentario registrado', usuario: 'Usuario actual', detalle: texto.substring(0,50) + '...' });
+      $('#nuevaObservacion').val('');
+      $('#notificarAsociado').prop('checked', false);
+      renderCaso(caso);
+      // Activar tab de comentarios
+      bootstrap.Tab.getOrCreateInstance(document.getElementById('tab-coments')).show();
+      FPQRS.utils.toast('Observación registrada' + (notif ? ' y notificada al asociado.' : '.'), 'success');
+    });
+
+    // Cerrar caso
+    $('#btnCerrarCaso').on('click', function() {
+      if (!confirm('¿Confirma el cierre del caso ' + caso.id + '?')) return;
+      caso.estado  = 'Cerrado';
+      caso.semaforo = 'Cerrado';
+      caso.historial.push({ fecha: new Date().toISOString(), accion: 'Caso cerrado', usuario: 'Usuario actual', detalle: 'Caso cerrado satisfactoriamente' });
+      renderCaso(caso);
+      FPQRS.utils.toast('Caso cerrado correctamente.', 'success');
+    });
+
+    // Anular caso
+    $('#btnAnularCaso').on('click', function() {
+      if (!confirm('¿Confirma la anulación del caso ' + caso.id + '? Esta acción no se puede deshacer.')) return;
+      caso.estado = 'Anulado';
+      caso.historial.push({ fecha: new Date().toISOString(), accion: 'Caso anulado', usuario: 'Usuario actual', detalle: 'Caso anulado por el operador' });
+      renderCaso(caso);
+      FPQRS.utils.toast('Caso anulado.', 'warning');
+    });
+  }
+});
+</script>
+</body>
+</html>

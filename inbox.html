@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bandeja de Casos FPQRS — GestorFPQRS">
+  <title>Bandeja de Casos — GestorFPQRS</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    crossorigin="anonymous">
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+<!-- ═══════════════════════════════════════════════════
+     OVERLAY — cierre del sidebar en móvil
+═══════════════════════════════════════════════════ -->
+<div class="sidebar-overlay" aria-hidden="true"></div>
+
+<!-- ═══════════════════════════════════════════════════
+     WRAPPER PRINCIPAL
+═══════════════════════════════════════════════════ -->
+<div class="app-wrapper">
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━
+       SIDEBAR
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <aside class="sidebar" id="sidebar" aria-label="Menú de navegación">
+
+    <!-- Logo -->
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <img src="assets/images/app-logo.png" alt="Logo">
+      </div>
+      <span class="brand-name">GestorFPQRS</span>
+    </div>
+
+    <!-- Colapsar / expandir -->
+    <button class="sidebar-collapse-btn" aria-label="Colapsar menú">
+      <i class="bi bi-chevron-left"></i>
+    </button>
+
+    <!-- Operación -->
+    <div class="sidebar-section-label">Operación</div>
+    <nav class="sidebar-nav">
+      <a href="inbox.html" class="nav-link active">
+        <i class="bi bi-inbox"></i>
+        <span>Bandeja de Casos</span>
+        <span class="badge-count">5</span>
+      </a>
+      <a href="case-detail.html" class="nav-link">
+        <i class="bi bi-file-text"></i>
+        <span>Detalle de Caso</span>
+      </a>
+      <a href="fpqrs-form.html" class="nav-link">
+        <i class="bi bi-plus-circle"></i>
+        <span>Registrar FPQRS</span>
+      </a>
+      <a href="#" class="nav-link">
+        <i class="bi bi-person-workspace"></i>
+        <span>Crear Caso (Operador)</span>
+      </a>
+      <a href="#" class="nav-link">
+        <i class="bi bi-bar-chart"></i>
+        <span>Métricas</span>
+      </a>
+      <a href="#" class="nav-link">
+        <i class="bi bi-graph-up"></i>
+        <span>Analítica</span>
+      </a>
+      <a href="#" class="nav-link">
+        <i class="bi bi-download"></i>
+        <span>Exportar Casos</span>
+      </a>
+    </nav>
+
+    <!-- Administración -->
+    <div class="sidebar-section-label">Administración</div>
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-link">
+        <i class="bi bi-clock-history"></i>
+        <span>Auditoría</span>
+      </a>
+      <a href="parametrizacion.html" class="nav-link">
+        <i class="bi bi-sliders"></i>
+        <span>Parametrización</span>
+      </a>
+      <a href="#" class="nav-link">
+        <i class="bi bi-toggles"></i>
+        <span>Parámetros Alt.</span>
+      </a>
+      <a href="#" class="nav-link">
+        <i class="bi bi-diagram-3"></i>
+        <span>Modelo Cat. Resp.</span>
+      </a>
+    </nav>
+
+    <!-- Notificaciones, usuario y logout -->
+    <div class="sidebar-footer">
+      <button class="sidebar-notif-btn" aria-label="Notificaciones">
+        <i class="bi bi-bell"></i>
+        <span>Notificaciones</span>
+      </button>
+      <div class="sidebar-user">
+        <div class="avatar topbar-user-avatar">SM</div>
+        <div class="user-info">
+          <div class="name topbar-user-name">Sofía Martínez</div>
+          <div class="role">Administrador</div>
+        </div>
+      </div>
+      <a href="login.html" class="sidebar-logout btn-logout">
+        <i class="bi bi-box-arrow-left"></i>
+        <span>Cerrar sesión</span>
+      </a>
+    </div>
+
+  </aside><!-- /sidebar -->
+
+  <!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━
+       CONTENIDO PRINCIPAL
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+  <div class="main-content">
+
+    <!-- Botón de menú móvil (el sidebar reemplaza al topbar en escritorio) -->
+    <button class="mobile-menu-btn sidebar-toggle" aria-label="Abrir menú" aria-controls="sidebar">
+      <i class="bi bi-list"></i>
+    </button>
+
+    <!-- — Contenido de la página — -->
+    <main class="page-content" id="mainContent">
+
+      <!-- Cabecera de sección -->
+      <div class="inbox-header d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <div>
+          <h1 class="page-title mb-0">Bandeja de Casos</h1>
+          <p class="text-muted small mb-0">
+            Gestión de casos FPQRS — Actualizado:
+            <span id="lastUpdate">07/05/2026 00:18</span>
+          </p>
+        </div>
+        <div class="header-actions d-flex gap-2">
+          <button class="btn btn-outline-secondary btn-sm" id="btnExportar">
+            <i class="bi bi-download me-1"></i>
+            <span class="btn-text-hide-xs">Exportar</span>
+          </button>
+          <button class="btn btn-outline-primary btn-sm" id="btnActualizar">
+            <i class="bi bi-arrow-clockwise me-1"></i>
+            <span class="btn-text-hide-xs">Actualizar</span>
+          </button>
+          <a href="fpqrs-form.html" class="btn btn-primary btn-sm">
+            <i class="bi bi-plus-lg me-1"></i>
+            <span class="btn-text-hide-xs">Nuevo caso</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Tarjetas de estadísticas -->
+      <div class="row g-3 mb-3 stats-row">
+        <div class="col-6 col-sm-6 col-lg-3">
+          <div class="stat-card stat-active">
+            <div class="stat-icon-row">
+              <div class="stat-icon"><i class="bi bi-folder"></i></div>
+            </div>
+            <div class="stat-value" id="statActivos">—</div>
+            <div class="stat-label">Casos activos</div>
+            <div class="stat-sub">En proceso de gestión</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-lg-3">
+          <div class="stat-card stat-vencido">
+            <div class="stat-icon-row">
+              <div class="stat-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
+              <span class="stat-dot"></span>
+            </div>
+            <div class="stat-value" id="statVencido">—</div>
+            <div class="stat-label">SLA vencido</div>
+            <div class="stat-sub">Requieren atención urgente</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-lg-3">
+          <div class="stat-card stat-proximo">
+            <div class="stat-icon-row">
+              <div class="stat-icon"><i class="bi bi-clock-fill"></i></div>
+            </div>
+            <div class="stat-value" id="statProximo">—</div>
+            <div class="stat-label">Próximos a vencer</div>
+            <div class="stat-sub">Vencen en las próximas 24h</div>
+          </div>
+        </div>
+        <div class="col-6 col-sm-6 col-lg-3">
+          <div class="stat-card stat-cerrado">
+            <div class="stat-icon-row">
+              <div class="stat-icon"><i class="bi bi-check-circle-fill"></i></div>
+            </div>
+            <div class="stat-value" id="statCerrado">—</div>
+            <div class="stat-label">Cerrados hoy</div>
+            <div class="stat-sub">Resueltos en el día</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de casos -->
+      <div class="cases-table-wrapper" id="casesTableWrapper">
+
+        <!-- Barra de búsqueda y filtros (integrada en la tarjeta de la tabla) -->
+        <div class="filter-toolbar">
+          <div class="filter-search">
+            <i class="bi bi-search"></i>
+            <input type="text" id="filterSearch" placeholder="Buscar por radicado o nombre del asociado...">
+          </div>
+          <button class="filter-toggle-btn" id="filterToggle" type="button"
+            aria-expanded="false" aria-controls="filterBody">
+            <i class="bi bi-funnel"></i>Filtros
+          </button>
+        </div>
+
+        <div id="filterBody" class="filter-body" style="display:none;">
+          <div class="row g-2">
+
+            <!-- Tipo -->
+            <div class="col-6 col-md-3">
+              <label for="filterTipo" class="form-label">Tipo</label>
+              <select class="form-select form-select-sm" id="filterTipo">
+                <option value="">Todos</option>
+              </select>
+            </div>
+
+            <!-- Estado -->
+            <div class="col-6 col-md-3">
+              <label for="filterEstado" class="form-label">Estado</label>
+              <select class="form-select form-select-sm" id="filterEstado">
+                <option value="">Todos</option>
+              </select>
+            </div>
+
+            <!-- Servicio -->
+            <div class="col-6 col-md-3">
+              <label for="filterServicio" class="form-label">Servicio</label>
+              <select class="form-select form-select-sm" id="filterServicio">
+                <option value="">Todos</option>
+              </select>
+            </div>
+
+            <!-- Semáforo -->
+            <div class="col-6 col-md-3">
+              <label for="filterSemaforo" class="form-label">Semáforo</label>
+              <select class="form-select form-select-sm" id="filterSemaforo">
+                <option value="">Todos</option>
+                <option value="Vencido">Vencido</option>
+                <option value="Próximo a vencer">Próximo a vencer</option>
+                <option value="En tiempo">En tiempo</option>
+                <option value="Cerrado">Cerrado</option>
+              </select>
+            </div>
+
+          </div>
+
+          <!-- Botón limpiar -->
+          <div class="mt-2 text-end">
+            <button class="btn btn-sm btn-link text-muted p-0" id="btnResetFilters">
+              <i class="bi bi-x-circle me-1"></i>Limpiar filtros
+            </button>
+          </div>
+        </div><!-- /filter-body -->
+
+        <div class="table-responsive-fpqrs">
+          <table class="table cases-table" aria-label="Tabla de casos FPQRS">
+            <thead>
+              <tr>
+                <th class="sortable" data-col="id">
+                  Radicado <i class="bi bi-arrow-down-up ms-1"></i>
+                </th>
+                <th class="sortable" data-col="fechaRadicado">
+                  Fecha Rad. <i class="bi bi-arrow-down-up ms-1"></i>
+                </th>
+                <th class="sortable" data-col="tipo">
+                  Tipo <i class="bi bi-arrow-down-up ms-1"></i>
+                </th>
+                <th class="col-hide-mobile">Servicio</th>
+                <th class="col-hide-mobile">Categoría</th>
+                <th class="col-hide-tablet">Subcategoría</th>
+                <th class="col-hide-mobile">Asociado</th>
+                <th class="col-hide-tablet">Responsable</th>
+                <th>Prioridad</th>
+                <th class="sortable" data-col="estado">
+                  Estado <i class="bi bi-arrow-down-up ms-1"></i>
+                </th>
+                <th class="col-hide-mobile">Límite SLA</th>
+                <th>Semáforo</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="casesTableBody">
+              <!-- Filas generadas por cases.js -->
+              <tr>
+                <td colspan="13" class="text-center py-5">
+                  <div class="spinner-border spinner-border-sm text-primary me-2" role="status"></div>
+                  Cargando casos...
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pie de tabla -->
+        <div class="table-footer">
+          <div class="per-page-select">
+            <span class="per-page-label text-muted">Mostrar:</span>
+            <select id="perPageSelect" aria-label="Registros por página">
+              <option value="10" selected>10 por página</option>
+              <option value="25">25 por página</option>
+              <option value="50">50 por página</option>
+            </select>
+          </div>
+
+          <span id="tablePaginationInfo" class="text-muted">Cargando...</span>
+
+          <nav aria-label="Paginación de casos">
+            <ul class="pagination pagination-sm mb-0" id="tablePagination">
+            </ul>
+          </nav>
+        </div>
+
+      </div><!-- /cases-table-wrapper -->
+
+    </main><!-- /page-content -->
+
+  </div><!-- /main-content -->
+
+</div><!-- /app-wrapper -->
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
+  crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+  crossorigin="anonymous"></script>
+<script src="js/main.js"></script>
+<script src="js/cases.js"></script>
+</body>
+</html>

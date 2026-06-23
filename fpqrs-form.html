@@ -1,0 +1,519 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Radique su Felicitación, Petición, Queja, Reclamo o Sugerencia ante CoopFinanzas de forma fácil y segura.">
+  <title>Radicar FPQRS — CoopFinanzas</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    crossorigin="anonymous">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Estilos personalizados -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/responsive.css">
+
+  <link rel="stylesheet" href="css/public-form.css">
+</head>
+<body>
+
+  <!-- =====================================================
+       TOPBAR PÚBLICA
+       Visible para cualquier usuario sin login
+       Contiene logo + nombre + enlace al login interno
+  ===================================================== -->
+  <header class="public-topbar">
+    <div class="container">
+      <!-- Marca / Logo -->
+      <a href="login.html" class="brand">
+        <div class="brand-icon"><img src="assets/images/app-logo.png" alt="Logo"></div>
+        <div>
+          <span class="brand-name">GestorFPQRS</span>
+          <span class="brand-sub">CoopFinanzas — Portal de Atención al Asociado</span>
+        </div>
+      </a>
+
+      <!-- Estado del servicio -->
+      <div class="service-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        Servicio disponible
+      </div>
+    </div>
+  </header>
+  <!-- FIN TOPBAR -->
+
+
+  <!-- =====================================================
+       ENCABEZADO DE PÁGINA
+       Título y descripción breve, sobre fondo claro
+  ===================================================== -->
+  <section class="fpqrs-page-header">
+    <div class="container">
+      <h1>Registrar caso FPQRS</h1>
+      <p>
+        Diligencie el formulario para radicar su Felicitación, Petición, Queja, Reclamo o Sugerencia.
+        Los campos marcados con <span class="text-danger">*</span> son obligatorios.
+      </p>
+    </div>
+  </section>
+  <!-- FIN ENCABEZADO -->
+
+
+  <!-- =====================================================
+       BANNER INFORMATIVO
+       Aviso sobre qué esperar tras el envío
+  ===================================================== -->
+  <div class="container">
+    <div class="info-banner">
+      <i class="bi bi-info-circle-fill"></i>
+      <div>
+        <strong>Información importante</strong>
+        <p class="mb-0">
+          Al enviar este formulario, su caso será radicado y recibirá un número de seguimiento.
+          Nuestro equipo le contactará según los tiempos de respuesta establecidos por la
+          Superintendencia Financiera de Colombia.
+        </p>
+      </div>
+    </div>
+  </div>
+  <!-- FIN BANNER -->
+
+
+  <!-- =====================================================
+       CUERPO PRINCIPAL DEL FORMULARIO
+       Fondo gris claro para destacar las secciones blancas
+  ===================================================== -->
+  <main class="fpqrs-body">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-12">
+
+          <!-- ===================================================
+               FORMULARIO PRINCIPAL
+               id="fpqrsForm" — form.js escucha el submit aquí
+          =================================================== -->
+          <form id="fpqrsForm" novalidate>
+
+
+            <!-- ===============================================
+                 SECCIÓN 1: DATOS PERSONALES
+                 IDs que lee form.js:
+                   #caseIdType, #caseIdNum, #caseNombre,
+                   #caseCorreo, #caseCelular, #caseDireccion
+            =============================================== -->
+            <div class="form-section">
+              <div class="form-section-header">
+                <i class="bi bi-person"></i>
+                <div>
+                  <h5>Datos personales</h5>
+                  <p>Información del asociado que registra el caso</p>
+                </div>
+              </div>
+
+              <div class="form-section-body">
+                <div class="row g-3">
+
+                  <!-- Tipo de identificación -->
+                  <div class="col-sm-6">
+                    <label for="caseIdType" class="form-label fw-semibold">
+                      Tipo de identificación <span class="text-danger">*</span>
+                    </label>
+                    <select id="caseIdType" class="form-select" required aria-describedby="caseIdTypeError">
+                      <option value="">Seleccionar...</option>
+                      <option value="CC">Cédula de Ciudadanía</option>
+                      <option value="CE">Cédula de Extranjería</option>
+                      <option value="PA">Pasaporte</option>
+                      <option value="NIT">NIT</option>
+                      <option value="TI">Tarjeta de Identidad</option>
+                    </select>
+                    <div class="invalid-feedback" id="caseIdTypeError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Número de identificación -->
+                  <div class="col-sm-6">
+                    <label for="caseIdNum" class="form-label fw-semibold">
+                      Número de identificación <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="caseIdNum" class="form-control"
+                           placeholder="Ej: 1082456789" required
+                           inputmode="numeric" maxlength="15"
+                           aria-describedby="caseIdNumError">
+                    <div class="invalid-feedback" id="caseIdNumError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Nombre completo -->
+                  <div class="col-12">
+                    <label for="caseNombre" class="form-label fw-semibold">
+                      Nombre completo <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" id="caseNombre" class="form-control"
+                           placeholder="Nombres y apellidos completos" required
+                           autocomplete="name" aria-describedby="caseNombreError">
+                    <div class="invalid-feedback" id="caseNombreError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Correo electrónico -->
+                  <div class="col-sm-6">
+                    <label for="caseCorreo" class="form-label fw-semibold">
+                      Correo electrónico <span class="text-danger">*</span>
+                    </label>
+                    <div class="form-field-helper" id="caseCorreoHelp">Le enviaremos confirmación y actualizaciones a este correo</div>
+                    <!--
+                      form.js valida con regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                      El .invalid-feedback muestra el mensaje de error
+                    -->
+                    <input type="email" id="caseCorreo" class="form-control"
+                           placeholder="correo@ejemplo.com" required
+                           autocomplete="email" aria-describedby="caseCorreoError caseCorreoHelp">
+                    <div class="invalid-feedback" id="caseCorreoError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Celular -->
+                  <div class="col-sm-6">
+                    <label for="caseCelular" class="form-label fw-semibold">
+                      Número de celular <span class="text-danger">*</span>
+                    </label>
+                    <!--
+                      form.js valida: /^3\d{9}$/ → 10 dígitos, empieza en 3
+                    -->
+                    <input type="tel" id="caseCelular" class="form-control"
+                           placeholder="3XXXXXXXXX" required
+                           inputmode="numeric" maxlength="10"
+                           autocomplete="tel" aria-describedby="caseCelularError">
+                    <div class="invalid-feedback" id="caseCelularError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Dirección (opcional) -->
+                  <div class="col-12">
+                    <label for="caseDireccion" class="form-label fw-semibold">
+                      Dirección de residencia
+                    </label>
+                    <input type="text" id="caseDireccion" class="form-control"
+                           placeholder="Calle, carrera, número, ciudad"
+                           autocomplete="street-address">
+                    <div class="invalid-feedback" aria-live="polite"></div>
+                  </div>
+
+                </div><!-- /row -->
+              </div><!-- /form-section-body -->
+            </div>
+            <!-- FIN SECCIÓN 1 -->
+
+
+            <!-- ===============================================
+                 SECCIÓN 2: DATOS DEL CASO
+                 IDs que lee form.js:
+                   #caseTipo (select), #caseServicio (cascada → #caseCate → #caseSubcate)
+                   #caseDescripcion
+            =============================================== -->
+            <div class="form-section">
+              <div class="form-section-header">
+                <i class="bi bi-briefcase"></i>
+                <div>
+                  <h5>Datos del caso</h5>
+                  <p>Describa detalladamente su solicitud para una atención más ágil</p>
+                </div>
+              </div>
+
+              <div class="form-section-body">
+                <div class="row g-3">
+
+                  <!-- Tipo de caso -->
+                  <div class="col-sm-6">
+                    <label for="caseTipo" class="form-label fw-semibold">
+                      Tipo de caso <span class="text-danger">*</span>
+                    </label>
+                    <div class="form-field-helper">¿Qué tipo de comunicación desea radicar?</div>
+                    <select id="caseTipo" class="form-select" required aria-describedby="caseTipoError">
+                      <option value="">Seleccionar tipo de caso...</option>
+                      <option value="Felicitación">Felicitación</option>
+                      <option value="Petición">Petición</option>
+                      <option value="Queja">Queja</option>
+                      <option value="Reclamo">Reclamo</option>
+                      <option value="Sugerencia">Sugerencia</option>
+                    </select>
+                    <div class="invalid-feedback" id="caseTipoError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Servicio — primer nivel de la cascada
+                       form.js llena este select desde cases.json (servicios) -->
+                  <div class="col-sm-6">
+                    <label for="caseServicio" class="form-label fw-semibold">
+                      Servicio <span class="text-danger">*</span>
+                    </label>
+                    <div class="form-field-helper">¿Sobre qué servicio de la cooperativa es su caso?</div>
+                    <select id="caseServicio" class="form-select" required aria-describedby="caseServicioError">
+                      <!--
+                        form.js.fillServiceOptions() inyecta aquí las <option>
+                        leyendo FPQRS.data.servicios del JSON
+                      -->
+                      <option value="">Seleccionar servicio...</option>
+                    </select>
+                    <div class="invalid-feedback" id="caseServicioError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Categoría — se habilita al seleccionar servicio
+                       form.js.loadCategorias(servicio) lo llena dinámicamente -->
+                  <div class="col-sm-6">
+                    <label for="caseCate" class="form-label fw-semibold">
+                      Categoría <span class="text-danger">*</span>
+                    </label>
+                    <div class="form-field-helper">Seleccione primero el servicio para ver las categorías disponibles</div>
+                    <select id="caseCate" class="form-select" required disabled aria-describedby="caseCateError">
+                      <option value="">Seleccionar categoría...</option>
+                    </select>
+                    <div class="invalid-feedback" id="caseCateError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Subcategoría — se habilita al seleccionar categoría
+                       form.js.loadSubcategorias(cate) lo llena dinámicamente -->
+                  <div class="col-sm-6">
+                    <label for="caseSubcate" class="form-label fw-semibold">
+                      Subcategoría <span class="text-danger">*</span>
+                    </label>
+                    <div class="form-field-helper">Seleccione la subcategoría que mejor describe su caso</div>
+                    <select id="caseSubcate" class="form-select" required disabled aria-describedby="caseSubcateError">
+                      <option value="">Seleccionar subcategoría...</option>
+                    </select>
+                    <div class="invalid-feedback" id="caseSubcateError" aria-live="polite"></div>
+                  </div>
+
+                  <!-- Descripción detallada del caso -->
+                  <div class="col-12">
+                    <label for="caseDescripcion" class="form-label fw-semibold">
+                      Descripción detallada del caso <span class="text-danger">*</span>
+                    </label>
+                    <div class="form-field-helper" id="caseDescripcionHelp">Incluya fechas, montos, números de transacción y cualquier detalle relevante que facilite la gestión de su caso</div>
+                    <!--
+                      form.js valida: val.length >= 30
+                    -->
+                    <textarea id="caseDescripcion" class="form-control" rows="5"
+                              placeholder="Describa su caso con el mayor detalle posible. Ej: El día 3 de mayo realicé un pago PSE por valor de $2.350.000 con código de transacción PSE-20260503-8847. El dinero fue debitado de mi cuenta pero no fue acreditado en el banco destino..."
+                              required maxlength="2000"
+                              aria-describedby="caseDescripcionError caseDescripcionHelp"></textarea>
+                    <div class="invalid-feedback" id="caseDescripcionError" aria-live="polite"></div>
+                  </div>
+
+                </div><!-- /row -->
+              </div><!-- /form-section-body -->
+            </div>
+            <!-- FIN SECCIÓN 2 -->
+
+
+            <!-- ===============================================
+                 SECCIÓN 3: DOCUMENTOS DE SOPORTE
+                 IDs que lee form.js:
+                   #dropzone, #fileInput, #filesPreview
+                 Tipos: PDF, JPG, PNG, DOCX — máx 5MB — máx 5 archivos
+            =============================================== -->
+            <div class="form-section">
+              <div class="form-section-header form-section-header-plain">
+                <div>
+                  <h5>Documentos de soporte</h5>
+                  <p>Adjunte capturas de pantalla, comprobantes u otros documentos que respalden su caso (máx. 5 archivos, 5 MB c/u)</p>
+                </div>
+              </div>
+
+              <div class="form-section-body">
+
+                <!-- Zona de arrastrar y soltar -->
+                <div id="dropzone" class="dropzone mb-3" role="button" tabindex="0"
+                     aria-controls="fileInput" aria-describedby="dropzoneHelp">
+                  <!--
+                    form.js escucha: click → abre #fileInput
+                    dragover/dragleave/drop → maneja archivos vía handleFiles()
+                  -->
+                  <div class="dz-icon"><i class="bi bi-cloud-upload"></i></div>
+                  <div class="dz-text">
+                    Arrastre archivos aquí o haga clic para seleccionar
+                  </div>
+                  <div class="dz-hint" id="dropzoneHelp">
+                    PDF, JPG, PNG, DOCX — máximo 5 MB por archivo
+                  </div>
+                </div>
+
+                <!--
+                  Input oculto visualmente — form.js lo "activa" programáticamente con $('#fileInput').click()
+                  El atributo `multiple` permite seleccionar varios archivos a la vez
+                  `accept` filtra los tipos en el diálogo del sistema operativo
+                -->
+                <input type="file" id="fileInput" class="d-none"
+                       multiple
+                       accept=".pdf,.jpg,.jpeg,.png,.docx,application/pdf,image/jpeg,image/png,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                       aria-label="Seleccionar archivos de soporte">
+
+                <!-- Lista de archivos adjuntados — form.js.renderFilePreviews() la llena -->
+                <div id="filesPreview" aria-live="polite">
+                  <p class="text-muted small mb-0">Sin archivos adjuntados.</p>
+                </div>
+
+              </div><!-- /form-section-body -->
+            </div>
+            <!-- FIN SECCIÓN 3 -->
+
+
+            <!-- ===============================================
+                 TÉRMINOS Y CONDICIONES
+            =============================================== -->
+            <div class="form-section">
+              <div class="form-section-body">
+                <!-- Checkbox tratamiento de datos (Ley 1581 de 2012) -->
+                <div class="form-check terms-check" id="terminosWrap">
+                  <!--
+                    form.js escucha #caseTerminos change:
+                    si checked → habilita #btnSubmit
+                    si unchecked → deshabilita #btnSubmit
+                  -->
+                  <input type="checkbox" id="caseTerminos" class="form-check-input">
+                  <label for="caseTerminos" class="form-check-label terms-label">
+                    Autorizo a <strong>CoopFinanzas</strong> para recolectar, almacenar, usar y tratar mis datos
+                    personales conforme a la
+                    <a href="#" class="text-primary">Política de Tratamiento de Datos Personales</a>
+                    y la Ley 1581 de 2012, con el fin de gestionar mi solicitud FPQRS y contactarme durante
+                    el proceso de atención.
+                  </label>
+                </div>
+                <div class="invalid-feedback" id="caseTerminosError" aria-live="polite"></div>
+              </div>
+            </div>
+            <!-- FIN TÉRMINOS -->
+
+
+            <!-- ===============================================
+                 BARRA DE ENVÍO
+            =============================================== -->
+            <div class="form-section">
+              <div class="form-section-body submit-bar">
+                <div>
+                  <p class="submit-bar-title">¿Listo para radicar su caso?</p>
+                  <p class="submit-bar-sub">Recibirá un número de radicado y confirmación por correo electrónico</p>
+                </div>
+                <button type="submit" id="btnSubmit" class="btn btn-radicar" disabled>
+                  Radicar caso FPQRS
+                  <i class="bi bi-chevron-right ms-1"></i>
+                </button>
+              </div>
+            </div>
+            <!-- FIN BARRA DE ENVÍO -->
+
+
+          </form>
+          <!-- FIN FORMULARIO PRINCIPAL -->
+
+
+        </div><!-- /col -->
+      </div><!-- /row -->
+    </div><!-- /container -->
+  </main>
+  <!-- FIN CUERPO PRINCIPAL -->
+
+
+  <!-- =====================================================
+       FOOTER PÚBLICO
+  ===================================================== -->
+  <footer class="public-footer">
+    <div class="container">
+      <p class="mb-0">&copy; 2026 CoopFinanzas. Sistema FPQRS — Normativa SFC Colombia</p>
+      <p class="mb-0">¿Necesita ayuda? Llame al <a href="tel:018000123456">01 8000 123 456</a></p>
+    </div>
+  </footer>
+  <!-- FIN FOOTER -->
+
+
+  <!-- =====================================================
+       MODAL DE ÉXITO
+       Se abre desde form.js.submitForm() así:
+         var modal = new bootstrap.Modal(document.getElementById('modalSuccess'));
+         modal.show();
+       form.js inserta el radicado en #modalRadicado
+       y el correo en #modalCorreo
+  ===================================================== -->
+  <div class="modal fade" id="modalSuccess" tabindex="-1"
+       aria-labelledby="modalSuccessLabel" aria-modal="true" role="dialog"
+       data-bs-backdrop="static" data-bs-keyboard="false">
+    <!-- data-bs-backdrop="static" → no cierra al hacer clic fuera -->
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-body text-center p-4 p-lg-5">
+
+          <!-- Ícono de check verde -->
+          <div class="modal-success-icon">
+            <i class="bi bi-check-lg"></i>
+          </div>
+
+          <h4 class="fw-bold mb-1" id="modalSuccessLabel">¡Caso radicado con éxito!</h4>
+          <p class="text-muted small mb-3">
+            Su caso ha sido registrado en el sistema. Guarde este número de radicado.
+          </p>
+
+          <!-- Número de radicado en formato monoespaciado -->
+          <div class="radicado-display mb-3" id="modalRadicado">
+            FPQRS-000000
+          </div>
+
+          <!-- Instrucciones post-envío -->
+          <p class="small mb-4 modal-instructions">
+            Recibirá una confirmación en
+            <strong id="modalCorreo">su correo</strong> en los próximos minutos.
+            Con el número de radicado puede hacer seguimiento a su caso.
+          </p>
+
+          <!-- Botones de acción -->
+          <div class="d-flex flex-column flex-sm-row gap-2 justify-content-center">
+            <button type="button" class="btn btn-primary"
+                    data-bs-dismiss="modal">
+              <i class="bi bi-plus-circle me-1"></i>
+              Radicar otro caso
+            </button>
+            <a href="login.html" class="btn btn-outline-secondary">
+              <i class="bi bi-house me-1"></i>
+              Ir al inicio
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- FIN MODAL DE ÉXITO -->
+
+
+  <!-- =====================================================
+       OVERLAY DE CARGA
+       main.js.showLoading() lo activa mientras se procesa
+  ===================================================== -->
+  <div id="loadingOverlay" class="loading-overlay d-none">
+    <div class="loading-spinner">
+      <div class="spinner-border text-primary" role="status"></div>
+      <div class="loading-text">Radicando su caso…</div>
+    </div>
+  </div>
+
+  <!-- Toast de notificaciones — main.js.FPQRS.utils.toast() lo usa -->
+  <div id="toastContainer" class="toast-container toast-container-fpqrs position-fixed bottom-0 end-0 p-3"></div>
+
+
+  <!-- =====================================================
+       SCRIPTS — orden importa:
+       1. jQuery primero (base)
+       2. Bootstrap Bundle (incluye Popper para modales)
+       3. main.js (FPQRS namespace + utilidades)
+       4. form.js (módulo del formulario)
+  ===================================================== -->
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+          crossorigin="anonymous"></script>
+  <script src="js/main.js"></script>
+  <script src="js/form.js"></script>
+</body>
+</html>
+
