@@ -16,9 +16,7 @@ responsive design, componentes reutilizables, accesibilidad básica y una experi
 
 ![Formulario público tablet](assets/screenshots/fpqrs-form-tablet.png)
 
-### Formulario público - Mobile
 
-![Formulario público mobile](assets/screenshots/fpqrs-form-mobile.png)
 
 ## Páginas Incluidas
 
